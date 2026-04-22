@@ -1,6 +1,6 @@
 # 🧬 SeuratAtlasExplorer
 
-> An interactive Shiny dashboard for exploring single-cell RNA-seq atlases built with Seurat — developed by the **Goriely Lab**, MRC Weatherall Institute of Molecular Medicine, University of Oxford.
+> An interactive Shiny dashboard for exploring single-cell RNA-seq atlases built with Seurat — developed by the **Goriely Lab**, Medical Institute of Immunology (IMI), University of Brussels (ULB)
 
 ---
 
@@ -27,7 +27,7 @@ All plots have adjustable **display size**, **download resolution (DPI + inches)
 install.packages("remotes")
 
 # Install SeuratAtlasExplorer
-remotes::install_github("GorielyLab/SeuratAtlasExplorer")
+remotes::install_github("francescopatane96/SeuratAtlasExplorer")
 ```
 
 ### 2 · Install required dependencies
@@ -168,7 +168,7 @@ If you use this app in your research, please cite:
 
 > Goriely Lab (2025). *SeuratAtlasExplorer: Interactive single-cell RNA-seq atlas exploration*.  
 > MRC Weatherall Institute of Molecular Medicine, University of Oxford.  
-> GitHub: https://github.com/GorielyLab/SeuratAtlasExplorer
+> GitHub: https://github.com/francescopatane96/SeuratAtlasExplorer
 
 ---
 
