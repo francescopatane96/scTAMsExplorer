@@ -92,7 +92,7 @@ atlas_ui <- function(metadata_choices) {
                 "Split violin / feature plot by any metadata",
                 "Top marker genes per cluster (FindMarkers)",
                 "Adjustable display size, font and DPI")),
-              .feature_card(shiny::HTML("&#128300;"), "DEGs + Volcano + Enrichment", list(
+              .feature_card(shiny::HTML("&#127755;"), "DEGs + Volcano + Enrichment", list(
                 "Subset cells by any metadata value",
                 "FindMarkers between any two groups",
                 "Interactive volcano with ggrepel labels",
@@ -209,7 +209,7 @@ atlas_ui <- function(metadata_choices) {
         ),
 
         # ---- Tab 2: DEGs -------------------------------------------
-        shiny::tabPanel(.tab_label("&#128300;", "DEGs"),
+        shiny::tabPanel(.tab_label("&#127755;", "DEGs"),
           shiny::sidebarLayout(
             shiny::sidebarPanel(width = 3,
               shiny::h4("Subset & compare"),
