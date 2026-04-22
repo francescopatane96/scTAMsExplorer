@@ -1,6 +1,6 @@
 # 🧬 SeuratAtlasExplorer
 
-> An interactive Shiny dashboard for exploring single-cell RNA-seq atlases built with Seurat — developed by the **Goriely Lab**, MRC Weatherall Institute of Molecular Medicine, University of Oxford.
+> An interactive Shiny dashboard for exploring single-cell RNA-seq atlases built with Seurat — developed by the **Goriely Lab**,
 
 ---
 
