@@ -495,13 +495,9 @@ atlas_server <- function(seurat_obj, metadata_choices) {
       ggsave(file, coexp_enrich_plot_obj(),
              width = input$coexp_enrich_dl_w, height = input$coexp_enrich_dl_h, dpi = input$coexp_enrich_dpi))
 
-  # ================================================
-  # TAB 5
-  # ================================================
-
 # ================================================
   # TAB 5
-  # ================================================
+# ================================================
 
   output$reg_module_selector <- renderUI({
     mods <- tryCatch({
@@ -509,7 +505,7 @@ atlas_server <- function(seurat_obj, metadata_choices) {
       c("All modules", sort(m[m != "grey"]))
     }, error = function(e) "All modules")
     selectInput("reg_selected_module", "Filter TFs by module:",
-                choices = mods, selected = "All modules")
+                choices = m, selected = "All modules")
   })
 
   reg_heatmap_data <- eventReactive(input$run_reg_heatmap, {
