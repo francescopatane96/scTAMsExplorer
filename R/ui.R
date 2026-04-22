@@ -99,7 +99,7 @@ atlas_ui <- function(metadata_choices) {
                 "p-value and log2FC threshold sliders",
                 "Enrichment run separately via EnrichR",
                 "Full geneset tables, UP and DOWN CSVs")),
-              .feature_card(shiny::HTML("&#128375;"), "TF Interaction Network", list(
+              .feature_card(shiny::HTML("&#127760;"), "TF Interaction Network", list(
                 "Interactive drag-and-zoom visNetwork graph",
                 "5 layout algorithms to choose from",
                 "Filter by Gain threshold and top N targets",
@@ -112,7 +112,7 @@ atlas_ui <- function(metadata_choices) {
                 "Gene to Module lookup by gene name",
                 "Per-module pathway enrichment (EnrichR)",
                 "Sortable, filterable, paginated tables")),
-              .feature_card(shiny::HTML("&#128293;"), "TF Regulon Heatmap", list(
+              .feature_card(shiny::HTML("&#127919;"), "TF Regulon Heatmap", list(
                 "Dot heatmap: TF expression vs regulon activity",
                 "Side-by-side positive and negative regulons",
                 "Filter by module membership or manual TF list",
@@ -282,7 +282,7 @@ atlas_ui <- function(metadata_choices) {
         ),
 
         # ---- Tab 3: TF Network -------------------------------------
-        shiny::tabPanel(.tab_label("&#128375;", "TF Network"),
+        shiny::tabPanel(.tab_label("&#127760;", "TF Network"),
           shiny::sidebarLayout(
             shiny::sidebarPanel(width = 3,
               shiny::h4("Source TF"),
@@ -380,7 +380,7 @@ atlas_ui <- function(metadata_choices) {
         ),
 
         # ---- Tab 5: Regulon ----------------------------------------
-        shiny::tabPanel(.tab_label("&#128293;", "Regulon"),
+        shiny::tabPanel(.tab_label("&#127919;", "Regulon"),
           shiny::sidebarLayout(
             shiny::sidebarPanel(width = 3,
               shiny::h4("Heatmap settings"),
