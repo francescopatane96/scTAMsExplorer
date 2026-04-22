@@ -504,7 +504,7 @@ atlas_server <- function(seurat_obj, metadata_choices) {
       m <- unique(GetModules(seurat_obj)$module)
       c("All modules", sort(m[m != "grey"]))
     }, error = function(e) "All modules")
-    selectInput("reg_selected_module", "Filter TFs by module:", choices = mods, selected = "All modules")
+    selectInput("reg_selected_module", "Filter TFs by module:", choices = m, selected = "All modules")
   })
 
   reg_heatmap_data <- eventReactive(input$run_reg_heatmap, {
