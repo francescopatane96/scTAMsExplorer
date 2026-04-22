@@ -785,4 +785,4 @@ atlas_server <- function(seurat_obj, metadata_choices) {
 }
 
   } # end server function
-}
+
