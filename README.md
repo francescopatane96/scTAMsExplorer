@@ -152,7 +152,7 @@ For **RStudio Server**, simply run `launch_explorer(seurat_obj)` and RStudio wil
 If you use this app in your research, please cite:
 
 > Goriely Lab (2025). *SeuratAtlasExplorer: Interactive single-cell RNA-seq atlas exploration*.  
-> MRC Weatherall Institute of Molecular Medicine, University of Oxford.  
+>  
 > GitHub: https://github.com/GorielyLab/SeuratAtlasExplorer
 
 ---
