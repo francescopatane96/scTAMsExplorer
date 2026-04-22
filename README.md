@@ -50,7 +50,11 @@ BiocManager::install("Seurat")   # if not already installed
 
 # hdWGCNA (required for co-expression module tab)
 remotes::install_github("smorabit/hdWGCNA", ref = "dev")
+```
 
+### 3 · Import required dependencies
+
+```
 library(shiny)
 library(Seurat)
 library(ggplot2)
