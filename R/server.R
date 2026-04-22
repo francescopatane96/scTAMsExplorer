@@ -499,12 +499,17 @@ atlas_server <- function(seurat_obj, metadata_choices) {
   # TAB 5
   # ================================================
 
+# ================================================
+  # TAB 5
+  # ================================================
+
   output$reg_module_selector <- renderUI({
     mods <- tryCatch({
       m <- unique(GetModules(seurat_obj)$module)
       c("All modules", sort(m[m != "grey"]))
     }, error = function(e) "All modules")
-    selectInput("reg_selected_module", "Filter TFs by module:", choices = m, selected = "All modules")
+    selectInput("reg_selected_module", "Filter TFs by module:",
+                choices = mods, selected = "All modules")
   })
 
   reg_heatmap_data <- eventReactive(input$run_reg_heatmap, {
@@ -514,8 +519,14 @@ atlas_server <- function(seurat_obj, metadata_choices) {
       validate(need(nrow(net) > 0, "No edges after Gain filter."))
 
       incProgress(0.15, detail = "Average expression per cluster...")
+      validate(need("Population_level3" %in% colnames(seurat_obj@meta.data),
+                    "Metadata column 'Population_level3' not found in the Seurat object."))
       avg_mat <- AverageExpression(seurat_obj, group.by = "Population_level3",
                                    assays = DefaultAssay(seurat_obj))[[1]]
+      # ⬇️ FIX BUG 1: forziamo avg_mat a matrice base
+      # (AverageExpression può restituire dgCMatrix / data.frame, su cui
+      #  colMeans(..., drop = FALSE) fallisce quando c'è una sola riga)
+      avg_mat      <- as.matrix(avg_mat)
       clusters     <- colnames(avg_mat)
       genes_in_mat <- rownames(avg_mat)
 
@@ -554,14 +565,27 @@ atlas_server <- function(seurat_obj, metadata_choices) {
       }
 
       incProgress(0.50, detail = "Building expression matrix...")
+
+      # ⬇️ FIX BUG 1 (seconda parte): helper che gestisce 0, 1 e N+ geni
+      safe_regulon_mean <- function(genes) {
+        if (length(genes) == 0) return(rep(NA_real_, length(clusters)))
+        if (length(genes) == 1) return(as.numeric(avg_mat[genes, ]))
+        as.numeric(colMeans(avg_mat[genes, , drop = FALSE], na.rm = TRUE))
+      }
+
       rows <- lapply(tfs_use, function(tf_name) {
         pos_genes <- net %>% filter(tf == !!tf_name, Cor > 0) %>% pull(gene) %>% unique() %>% intersect(genes_in_mat)
         neg_genes <- net %>% filter(tf == !!tf_name, Cor < 0) %>% pull(gene) %>% unique() %>% intersect(genes_in_mat)
-        data.frame(tf = tf_name, cluster = clusters,
-                   tf_expr = as.numeric(avg_mat[tf_name, ]),
-                   pos_reg = if (length(pos_genes) >= 1) as.numeric(colMeans(avg_mat[pos_genes, , drop = FALSE])) else rep(NA_real_, length(clusters)),
-                   neg_reg = if (length(neg_genes) >= 1) as.numeric(colMeans(avg_mat[neg_genes, , drop = FALSE])) else rep(NA_real_, length(clusters)),
-                   n_pos = length(pos_genes), n_neg = length(neg_genes), stringsAsFactors = FALSE)
+        data.frame(
+          tf       = tf_name,
+          cluster  = clusters,
+          tf_expr  = as.numeric(avg_mat[tf_name, ]),
+          pos_reg  = safe_regulon_mean(pos_genes),
+          neg_reg  = safe_regulon_mean(neg_genes),
+          n_pos    = length(pos_genes),
+          n_neg    = length(neg_genes),
+          stringsAsFactors = FALSE
+        )
       })
 
       df_wide <- bind_rows(rows) %>% group_by(tf) %>%
@@ -784,5 +808,5 @@ atlas_server <- function(seurat_obj, metadata_choices) {
     content  = function(file) write.csv(reg_enrich_results()$neg, file, row.names = FALSE))
 }
 
-  } # end server function
+  } # end server functio
 
