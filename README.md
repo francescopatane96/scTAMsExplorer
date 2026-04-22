@@ -159,4 +159,4 @@ If you use this app in your research, please cite:
 
 ## License
 
-MIT © Goriely Lab, University of Oxford
+MIT © Goriely Lab
