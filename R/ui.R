@@ -39,7 +39,7 @@ atlas_ui <- function(metadata_choices) {
         # ---- Tab 0: About ------------------------------------------
         shiny::tabPanel(.tab_label("&#8505;", "About"),
           shiny::tags$div(
-            style = "max-width:1140px;margin:0 auto;padding:22px 12px 0;",
+            style = "max-width:1600px;margin:0 auto;padding:22px 12px 0;",
 
             shiny::tags$div(class = "info-hero",
               shiny::tags$span(class = "hero-badge",
