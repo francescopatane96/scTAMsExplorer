@@ -141,12 +141,12 @@ atlas_ui <- function(metadata_choices) {
             shiny::tags$div(class = "info-footer",
               shiny::tags$div(class = "footer-credit",
                 shiny::tags$strong("Goriely Lab"), shiny::tags$br(),
-                "MRC Weatherall Institute of Molecular Medicine - University of Oxford",
+                "Institute of Medical Immunology (IMI) - University of Brussels (ULB)",
                 shiny::tags$br(),
                 shiny::tags$span(style = "font-size:12px;color:#6b7f96;",
                   "Dataset and analysis pipeline developed by the Goriely Lab.")
               ),
-              shiny::tags$span(class = "footer-badge", "Goriely Lab - Oxford")
+              shiny::tags$span(class = "footer-badge", "Goriely Lab - ULB")
             ),
             shiny::tags$div(style = "height:30px;")
           )
