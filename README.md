@@ -1,6 +1,6 @@
 # 🧬 SeuratAtlasExplorer
 
-> An interactive Shiny dashboard for exploring single-cell RNA-seq atlases built with Seurat — developed by the **Goriely Lab**, Medical Institute of Immunology (IMI), University of Brussels (ULB)
+> An interactive Shiny dashboard for exploring single-cell RNA-seq atlases built with Seurat — developed by the **Goriely Lab**, Institute of Medical Immunology (IMI), University of Brussels (ULB)
 
 ---
 
@@ -10,9 +10,9 @@
 |-----|----------------|
 | 🗺️ **UMAP + Expression** | UMAP by any metadata · FeaturePlot · VlnPlot · DotPlot · Heatmap · blend & split modes · marker genes |
 | 🔬 **DEGs + Volcano** | FindMarkers between any two groups · interactive volcano (ggrepel) · separate EnrichR enrichment step · geneset tables |
-| 🕸️ **TF Network** | Interactive visNetwork graph · 5 layouts · Gain/top-N filters · reverse search · TF–TF only mode · CSV downloads |
+| 🌐 **TF Network** | Interactive visNetwork graph · 5 layouts · Gain/top-N filters · reverse search · TF–TF only mode · CSV downloads |
 | 🔗 **Co-expression Modules** | hdWGCNA hub genes · module sizes · gene → module lookup · per-module EnrichR enrichment |
-| 🔥 **TF Regulon Heatmap** | Dot heatmap of TF expression vs positive/negative regulon activity · module filter · per-TF EnrichR enrichment |
+| 🎯 **TF Regulon Heatmap** | Dot heatmap of TF expression vs positive/negative regulon activity · module filter · per-TF EnrichR enrichment |
 
 All plots have adjustable **display size**, **download resolution (DPI + inches)**, and **font size**. All tables are sortable, filterable, and paginated via DataTables.
 
