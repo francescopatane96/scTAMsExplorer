@@ -18,6 +18,10 @@ All plots have adjustable **display size**, **download resolution (DPI + inches)
 
 ---
 
+docker run --rm -p 3838:3838 \
+     -v /Users/Francesco/Desktop/Atlas_MISTRG.rds:/data/atlas.rds:ro \
+     ghcr.io/francescopatane96/sctamsexplorer:latest
+
 ## Installation
 
 ### 1 · Install from GitHub
