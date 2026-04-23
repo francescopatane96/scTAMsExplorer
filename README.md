@@ -76,7 +76,7 @@ library(visNetwork)
 ## Quick start
 
 ```r
-library(SeuratAtlasExplorer)
+library(scTAMsExplorer)
 
 # Load your Seurat object
 seurat_obj <- readRDS("path/to/my_atlas.rds")
