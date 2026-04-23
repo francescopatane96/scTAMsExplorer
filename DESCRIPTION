@@ -1,9 +1,9 @@
-Package: SeuratAtlasExplorer
+Package: scTAMsExplorer
 Title: Interactive Single-Cell RNA-seq Atlas Explorer
 Version: 0.1.0
 Authors@R: 
     person("Goriely Lab", 
-           email = "goriely@well.ox.ac.uk", 
+           email", 
            role = c("aut", "cre"),
            comment = c(ORCID = ""))
 Description: A modular Shiny dashboard for exploring single-cell RNA-seq
@@ -39,5 +39,5 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
-URL: https://github.com/GorielyLab/SeuratAtlasExplorer
-BugReports: https://github.com/GorielyLab/SeuratAtlasExplorer/issues
+URL: 
+BugReports: 
