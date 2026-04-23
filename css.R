@@ -8,7 +8,7 @@ app_css <- function() {
   css_file <- system.file("app/www/styles.css", package = "SeuratExplorer")
   if (!nzchar(css_file)) {
     css_file <- file.path(
-      system.file(package = "SeuratExplorer"), "app", "www", "styles.css"
+      system.file(package = "SeuratExplorer"), "styles.css"
     )
   }
   paste(readLines(css_file, warn = FALSE), collapse = "\n")
