@@ -20,8 +20,10 @@ All plots have adjustable **display size**, **download resolution (DPI + inches)
 ## Installation - Docker (recommended way)
 
 ### 1 · Install Docker Desktop
+### 2 · Change the docker memory limit up to 16 GB
+Settings/Resources/Resource Allocation/Memory Limit
 
-### 2 · Download the image and run the container via terminal
+### 3 · Download the image and run the container via terminal
 
 ```
 docker run --rm -p 3838:3838 \
