@@ -56,7 +56,7 @@ atlas_server <- function(seurat_obj, metadata_choices) {
       head(input$n_markers)
   })
 
-  output$marker_table <- renderDT({
+  output$marker_table <- DT::renderDT({
     req(markers_data())
     datatable(markers_data(), filter = "top",
               options = list(pageLength = 10, scrollX = TRUE))
