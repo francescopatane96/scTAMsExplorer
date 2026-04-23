@@ -8,7 +8,7 @@ app_css <- function() {
   # system.file() cerca dentro inst/ del pacchetto installato:
   # se il file è inst/styles.css, passa "www/styles.css"
   # se è inst/styles.css, passa "styles.css"
-  css_file <- system.file("styles.css", package = "scTAMsExplorer")
+  css_file <- system.file("/inst/app/www/styles.css", package = "scTAMsExplorer")
 
   if (!nzchar(css_file)) {
     css_file <- system.file("styles.css", package = "scTAMsExplorer")
