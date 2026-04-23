@@ -5,10 +5,10 @@
 #' Read the app CSS from the installed package file
 #' @keywords internal
 app_css <- function() {
-  css_file <- system.file("app/www/styles.css", package = "SeuratAtlasExplorer")
+  css_file <- system.file("app/www/styles.css", package = "scTAMsExplorer")
   if (!nzchar(css_file)) {
     css_file <- file.path(
-      system.file(package = "SeuratAtlasExplorer"), "app", "www", "styles.css"
+      system.file(package = "scTAMsExplorer"), "app", "www", "styles.css"
     )
   }
   paste(readLines(css_file, warn = FALSE), collapse = "\n")
