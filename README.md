@@ -1,6 +1,6 @@
-# 🧬 SeuratAtlasExplorer
+# 🧬 scTAMsExplorer
 
-> An interactive Shiny dashboard for exploring single-cell RNA-seq atlases built with Seurat — developed by the **Goriely Lab**, Institute of Medical Immunology (IMI), University of Brussels (ULB)
+> An interactive Shiny dashboard for exploring a single cell transcriptomic atlas of Mono&Macro extracted from humanized MISTRG healthy and tumoral tissues.  — developed by the **Goriely Lab**, Institute of Medical Immunology (IMI), University of Brussels (ULB)
 
 ---
 
