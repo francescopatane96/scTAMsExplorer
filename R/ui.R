@@ -1,5 +1,5 @@
 # ============================================================
-# ui.R -- UI builder for SeuratAtlasExplorer
+# ui.R -- UI builder for scTAMsExplorer
 # ============================================================
 
 .feature_card <- function(icon, title, items) {
@@ -44,7 +44,7 @@ atlas_ui <- function(metadata_choices) {
             shiny::tags$div(class = "info-hero",
               shiny::tags$span(class = "hero-badge",
                                "Bioinformatics - scRNA-seq - Single-cell Atlas"),
-              shiny::tags$h2("Welcome to Seurat Atlas Explorer"),
+              shiny::tags$h2("Welcome to scTAMsExplorer"),
               shiny::tags$p(
                 "A modular, interactive dashboard for exploring single-cell RNA-seq atlases.",
                 "All computations run live on the Seurat object passed to ",
