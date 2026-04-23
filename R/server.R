@@ -519,9 +519,7 @@ atlas_server <- function(seurat_obj, metadata_choices) {
                     "Metadata column 'Population_level3' not found in the Seurat object."))
       avg_mat <- AverageExpression(seurat_obj, group.by = "Population_level3",
                                    assays = DefaultAssay(seurat_obj))[[1]]
-      # ⬇️ FIX BUG 1: forziamo avg_mat a matrice base
-      # (AverageExpression può restituire dgCMatrix / data.frame, su cui
-      #  colMeans(..., drop = FALSE) fallisce quando c'è una sola riga)
+      
       avg_mat      <- as.matrix(avg_mat)
       clusters     <- colnames(avg_mat)
       genes_in_mat <- rownames(avg_mat)
@@ -562,7 +560,7 @@ atlas_server <- function(seurat_obj, metadata_choices) {
 
       incProgress(0.50, detail = "Building expression matrix...")
 
-      # ⬇️ FIX BUG 1 (seconda parte): helper che gestisce 0, 1 e N+ geni
+      
       safe_regulon_mean <- function(genes) {
         if (length(genes) == 0) return(rep(NA_real_, length(clusters)))
         if (length(genes) == 1) return(as.numeric(avg_mat[genes, ]))
@@ -804,5 +802,5 @@ atlas_server <- function(seurat_obj, metadata_choices) {
     content  = function(file) write.csv(reg_enrich_results()$neg, file, row.names = FALSE))
 }
 
-  } # end server functio
+  } # end server function
 
