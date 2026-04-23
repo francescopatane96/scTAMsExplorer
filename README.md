@@ -27,7 +27,7 @@ All plots have adjustable **display size**, **download resolution (DPI + inches)
 install.packages("remotes")
 
 # Install SeuratAtlasExplorer
-remotes::install_github("francescopatane96/SeuratAtlasExplorer")
+remotes::install_github("francescopatane96/scTAMsExplorer")
 ```
 
 ### 2 · Install required dependencies
