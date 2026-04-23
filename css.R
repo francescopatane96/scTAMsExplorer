@@ -5,7 +5,7 @@
 #' Read the app CSS from the installed package file
 #' @keywords internal
 app_css <- function() {
-  css_file <- system.file("styles.css", package = "scTAMsExplorer")
+  css_file <- system.file("inst/styles.css", package = "scTAMsExplorer")
   if (!nzchar(css_file)) {
     css_file <- file.path(
       system.file(package = "scTAMsExplorer"), "styles.css"
