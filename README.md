@@ -17,10 +17,17 @@
 All plots have adjustable **display size**, **download resolution (DPI + inches)**, and **font size**. All tables are sortable, filterable, and paginated via DataTables.
 
 ---
+## Installation - Docker (recommended way)
 
+### 1 · Install Docker Desktop
+
+### 2 · Download the image and run the container via terminal
+
+```
 docker run --rm -p 3838:3838 \
-     -v /Users/Francesco/Desktop/Atlas_MISTRG.rds:/data/atlas.rds:ro \
+     -v /path/to/your/seurat_object.rds:/data/atlas.rds:ro \
      ghcr.io/francescopatane96/sctamsexplorer:latest
+```
 
 ## Installation
 
