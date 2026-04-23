@@ -2,8 +2,8 @@ Package: scTAMsExplorer
 Title: Interactive Single-Cell RNA-seq Atlas Explorer
 Version: 0.1.0
 Authors@R: 
-    person("Goriely Lab", 
-           email = "", 
+    person("Francesco Patanè", 
+           email = "francesco.patane@ulb.be", 
            role = c("aut", "cre"),
            comment = c(ORCID = ""))
 Description: A modular Shiny dashboard for exploring single-cell RNA-seq
