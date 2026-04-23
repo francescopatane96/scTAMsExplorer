@@ -171,6 +171,7 @@ For **RStudio Server**, simply run `launch_explorer(seurat_obj)` and RStudio wil
 If you use this app in your research, please cite:
 
 > Detavernier, Donckier de Donceel, Patanè, Pedron et al. Regulatory Networks Shaping Human Tumor-Associated Macrophages In Vivo Identify MAFB as a Key Transcriptional Driver, 18 January 2026, PREPRINT (Version 1) available at Research Square [https://doi.org/10.21203/rs.3.rs-8562817/v1]
+
 > GitHub: https://github.com/francescopatane96/SeuratAtlasExplorer
 
 ---
