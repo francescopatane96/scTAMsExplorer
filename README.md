@@ -31,7 +31,7 @@ docker run --rm -p 3838:3838 \
      ghcr.io/francescopatane96/sctamsexplorer:latest
 ```
 
-### 3 · open a browser and go to localhost:://
+### 3 · open a browser and go to http://localhost:3838 
 
 ## Installation
 
