@@ -27,7 +27,7 @@ atlas_ui <- function(metadata_choices) {
       shiny::tags$span(class = "app-icon",
                        shiny::HTML("&#129516;")),
       shiny::tags$div(
-        shiny::tags$h1("Seurat Atlas Explorer"),
+        shiny::tags$h1("scTAMsExplorer"),
         shiny::tags$p(class = "app-subtitle",
                       "Single-cell RNA-seq analysis - Interactive dashboard")
       )
