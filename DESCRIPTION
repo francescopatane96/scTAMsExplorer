@@ -16,20 +16,23 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: false
 RoxygenNote: 7.3.1
-Imports:
+Depends:
+    R (>= 4.0.0),
     shiny (>= 1.7.0),
+    DT (>= 0.28)
+Imports:
     ggplot2 (>= 3.4.0),
     dplyr (>= 1.1.0),
     tibble (>= 3.2.0),
     tidyr (>= 1.3.0),
     plotly (>= 4.10.0),
-    DT (>= 0.28),
     enrichR (>= 3.2),
     patchwork (>= 1.1.0),
     scales (>= 1.2.0),
     stringr (>= 1.5.0),
     ggrepel (>= 0.9.3),
-    visNetwork (>= 2.1.0)
+    visNetwork (>= 2.1.0),
+    magrittr
 Suggests:
     Seurat (>= 4.0.0),
     SeuratObject (>= 4.0.0),
@@ -39,5 +42,5 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
-URL: 
-BugReports: 
+URL: https://github.com/francescopatane96/scTAMsExplorer
+BugReports: https://github.com/francescopatane96/scTAMsExplorer/issues
