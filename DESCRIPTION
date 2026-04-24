@@ -5,7 +5,7 @@ Authors@R:
     person("Francesco Patanè", 
            email = "francesco.patane@ulb.be", 
            role = c("aut", "cre"),
-           comment = c(ORCID = ""))
+           comment = c(ORCID = "0009-0001-8619-447X"))
 Description: A modular Shiny dashboard for exploring single-cell RNA-seq
     atlases built with Seurat. Provides interactive tools for UMAP
     visualisation, differential gene expression, volcano plots, pathway
