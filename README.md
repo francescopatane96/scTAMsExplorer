@@ -23,7 +23,7 @@ All plots have adjustable **display size**, **download resolution (DPI + inches)
 ### 2 · Change the docker memory limit up to 16 GB
 Settings/Resources/Resource Allocation/Memory Limit
 
-### 3 · Download the image and run the container via terminal
+### 3 · Download the image and run the container via terminal (adapt "/path/to/your/seurat_object.rds")
 
 ```
 docker run --rm -p 3838:3838 \
