@@ -21,10 +21,14 @@ All plots have adjustable **display size**, **download resolution (DPI + inches)
 
 ### 1 · Install Docker Desktop
 Follow the instructions for your system at https://docs.docker.com/desktop/
-### 2 · Change the docker memory limit up to 16 GB
-Settings/Resources/Resource Allocation/Memory Limit
 
-### 3 · Download the image and run the container via terminal (adapt "/path/to/your/seurat_object.rds")
+### 2 · Verify if docker has been sucesfully installed via terminal
+type and enter the command "docker info".
+
+### 3 · Change the docker memory limit up to 16 GB
+Via the docker desktop app, go to Settings/Resources/Resource Allocation/Memory Limit and increase the RAM memory limit
+
+### 4 · Download the image and run the container via terminal (adapt "/path/to/your/seurat_object.rds")
 
 ```
 docker run --rm -p 3838:3838 \
@@ -33,7 +37,7 @@ docker run --rm -p 3838:3838 \
 ```
 wait until the seurat object has been completely loaded (the terminal should display "Listening on http://0.0.0.0:3838")
 
-### 3 · open a browser and go to http://localhost:3838 
+### 5 · open a browser and go to http://localhost:3838 
 
 ## Installation
 
