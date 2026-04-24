@@ -24,14 +24,14 @@ suppressPackageStartupMessages({
 cat("Loading Seurat object...\n")
 seurat_obj <- readRDS(rds_path)
 
-# Alias umap -> umap.harmony se serve
+# Alias umap 
 if (!"umap.harmony" %in% names(seurat_obj@reductions) &&
      "umap"         %in% names(seurat_obj@reductions)) {
   seurat_obj[["umap.harmony"]] <- seurat_obj[["umap"]]
 }
 
 scTAMsExplorer::launch_explorer(
-  seurat_obj      = seurat_obj,     # ← QUESTA RIGA È FONDAMENTALE
+  seurat_obj      = seurat_obj,     
   port            = port,
   host            = host,
   launch.browser  = FALSE
