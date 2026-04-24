@@ -30,6 +30,7 @@ docker run --rm -p 3838:3838 \
      -v /path/to/your/seurat_object.rds:/data/atlas.rds:ro \
      ghcr.io/francescopatane96/sctamsexplorer:latest
 ```
+wait until the seurat object has been completely loaded
 
 ### 3 · open a browser and go to http://localhost:3838 
 
