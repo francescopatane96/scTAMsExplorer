@@ -1,6 +1,6 @@
 # 🧬 scTAMsExplorer
 
-> An interactive Shiny dashboard for exploring a single cell transcriptomic atlas of Mono&Macro extracted from humanized MISTRG healthy and tumoral tissues.  — developed by the **Goriely Lab**, Institute of Medical Immunology (IMI), University of Brussels (ULB)
+> An interactive Shiny dashboard for exploring a single cell transcriptomic atlas of Monocytes & Macrophages extracted from humanized MISTRG healthy and tumoral tissues.  — developed by the **Goriely Lab**, Institute of Medical Immunology (IMI), University of Brussels (ULB)
 
 ---
 
@@ -30,7 +30,7 @@ docker run --rm -p 3838:3838 \
      -v /path/to/your/seurat_object.rds:/data/atlas.rds:ro \
      ghcr.io/francescopatane96/sctamsexplorer:latest
 ```
-wait until the seurat object has been completely loaded
+wait until the seurat object has been completely loaded (the terminal should display "Listening on http://0.0.0.0:3838")
 
 ### 3 · open a browser and go to http://localhost:3838 
 
