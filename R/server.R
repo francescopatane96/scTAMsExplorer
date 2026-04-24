@@ -257,7 +257,7 @@ atlas_server <- function(seurat_obj, metadata_choices) {
       select(Term, Overlap, P.value, Adjusted.P.value, Combined.Score, Genes) %>%
       mutate(across(where(is.numeric), ~ signif(.x, 3)))
   }
-  output$enrich_up_table <- DT::renderDT({
+  output$enrich_up_table <- DT::dataTableOutput({
     req(enrich_results()$up)
     datatable(enrich_tidy(enrich_results()$up, input$n_enrich),
               options = list(pageLength = 8, scrollX = TRUE), filter = "top")
