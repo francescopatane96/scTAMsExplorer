@@ -35,8 +35,8 @@ Imports:
     magrittr,
     qs (>= 0.26.3)
 Suggests:
-    Seurat (>= 4.0.0),
-    SeuratObject (>= 4.0.0),
+    Seurat (= 5.1.0),
+    SeuratObject (= 5.0.2),
     hdWGCNA,
     igraph,
     testthat (>= 3.0.0),
