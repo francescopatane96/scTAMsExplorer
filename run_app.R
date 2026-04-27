@@ -23,7 +23,7 @@ suppressPackageStartupMessages({
 })
 
 cat("Loading Seurat object...\n")
-seurat_obj <- qread(qs_path)
+seurat_obj <- qread(qs_path, nthreads=6)
 
 # Alias umap 
 if (!"umap.harmony" %in% names(seurat_obj@reductions) &&
