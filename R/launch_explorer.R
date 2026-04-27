@@ -56,6 +56,7 @@ launch_explorer <- function(seurat_obj,
     if (!requireNamespace(pkg, quietly = TRUE)) {
       stop("Package '", pkg, "' is required but not installed.", call. = FALSE)
     }
+    library(pkg)
     if (!paste0("package:", pkg) %in% search()) {
       suppressMessages(suppressWarnings(attachNamespace(pkg)))
     }
