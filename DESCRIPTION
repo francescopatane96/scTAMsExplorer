@@ -19,7 +19,7 @@ RoxygenNote: 7.3.1
 Depends:
     R (>= 4.0.0),
     shiny (>= 1.7.0),
-    DT (>= 0.28)
+    DT (>= 0.28)  #0.33
 Imports:
     ggplot2 (>= 3.4.0),
     dplyr (>= 1.1.0),
