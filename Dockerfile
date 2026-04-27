@@ -41,6 +41,7 @@ RUN R -e "install.packages(c( \
     'tidyr', \
     'plotly', \
     'DT', \
+    'qs', \
     'enrichR', \
     'patchwork', \
     'scales', \
