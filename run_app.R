@@ -19,6 +19,7 @@ if (!file.exists(qs_path)) {
 suppressPackageStartupMessages({
   library(scTAMsExplorer)
   library(Seurat)
+  library(qs)
 })
 
 cat("Loading Seurat object...\n")
