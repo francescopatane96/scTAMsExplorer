@@ -6,7 +6,7 @@ port     <- as.integer(Sys.getenv("SHINY_PORT", unset = "3838"))
 host     <- Sys.getenv("SHINY_HOST", unset = "0.0.0.0")
 
 cat("scTAMsExplorer — containerised launcher\n")
-cat("  RDS path:", qs_path, "\n")
+cat("  QS path:", qs_path, "\n")
 cat("  Host    :", host,     "\n")
 cat("  Port    :", port,     "\n")
 
