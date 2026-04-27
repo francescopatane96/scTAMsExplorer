@@ -1,18 +1,18 @@
 
 #!/usr/bin/env Rscript
 
-rds_path <- Sys.getenv("SEURAT_QS", unset = "/data/atlas.qs")
+qs_path <- Sys.getenv("SEURAT_QS", unset = "/data/atlas.qs")
 port     <- as.integer(Sys.getenv("SHINY_PORT", unset = "3838"))
 host     <- Sys.getenv("SHINY_HOST", unset = "0.0.0.0")
 
 cat("scTAMsExplorer — containerised launcher\n")
-cat("  RDS path:", rds_path, "\n")
+cat("  RDS path:", qs_path, "\n")
 cat("  Host    :", host,     "\n")
 cat("  Port    :", port,     "\n")
 
-if (!file.exists(rds_path)) {
-  stop("Seurat .rds not found at: ", rds_path,
-       "\nMount it with -v /host/path.rds:", rds_path, ":ro",
+if (!file.exists(qs_path)) {
+  stop("Seurat .qs not found at: ", qs_path,
+       "\nMount it with -v /host/path.qs:", qs_path, ":ro",
        call. = FALSE)
 }
 
@@ -22,7 +22,7 @@ suppressPackageStartupMessages({
 })
 
 cat("Loading Seurat object...\n")
-seurat_obj <- qread(rds_path)
+seurat_obj <- qread(qs_path)
 
 # Alias umap 
 if (!"umap.harmony" %in% names(seurat_obj@reductions) &&
