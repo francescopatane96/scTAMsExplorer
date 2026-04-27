@@ -31,6 +31,8 @@ if (!"umap.harmony" %in% names(seurat_obj@reductions) &&
   seurat_obj[["umap.harmony"]] <- seurat_obj[["umap"]]
 }
 
+print("ready to launch")
+
 scTAMsExplorer::launch_explorer(
   seurat_obj      = seurat_obj,     
   port            = port,
