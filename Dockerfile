@@ -65,9 +65,9 @@ RUN R -e "remotes::install_github('smorabit/hdWGCNA', ref = 'dev', upgrade = 'ne
 # ------------------------------------------------------------
 # Install scTAMsExplorer from GitHub
 # ------------------------------------------------------------
-ARG PKG_REF=main
+#ARG PKG_REF=main
 RUN R -e "remotes::install_github('francescopatane96/scTAMsExplorer', \
-         ref = '${PKG_REF}', upgrade = 'never')"
+         ref = 'main', upgrade = 'never')"
 
 # ------------------------------------------------------------
 # Entry point
