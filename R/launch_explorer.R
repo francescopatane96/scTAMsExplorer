@@ -49,7 +49,7 @@ launch_explorer <- function(seurat_obj,
                              launch.browser = TRUE,
                              host           = "127.0.0.1",
                              ...) {
-  required_pkgs <- c("shiny", "DT", "ggplot2", "dplyr", "tidyr", "tibble",
+  required_pkgs <- c("qs", "shiny", "DT", "ggplot2", "dplyr", "tidyr", "tibble",
                      "plotly", "patchwork", "ggrepel", "visNetwork",
                      "stringr", "scales", "enrichR", "Seurat")
   for (pkg in required_pkgs) {
