@@ -53,6 +53,7 @@ launch_explorer <- function(seurat_obj,
                      "plotly", "patchwork", "ggrepel", "visNetwork",
                      "stringr", "scales", "enrichR", "Seurat")
   for (pkg in required_pkgs) {
+    print("ciao")
     if (!requireNamespace(pkg, quietly = TRUE)) {
       stop("Package '", pkg, "' is required but not installed.", call. = FALSE)
     }
