@@ -1,10 +1,16 @@
 FROM rocker/r-ver:4.4.1
 
-# Use Posit Package Manager for precompiled Linux binaries
-# (jammy = Ubuntu 22.04, matches rocker/r-ver:4.4.1)
-RUN echo 'options(repos = c(CRAN = "https://packagemanager.posit.co/cran/__linux__/jammy/latest"))' \
-    >> /usr/local/lib/R/etc/Rprofile.site
-
+ARG P3MVER='jammy/2024-09-11'
+# Add P3MVER as default repository for CRAN in .Rprofile
+RUN touch /root/.Rprofile \
+    && echo "options(repos=c(CRAN='"https://p3m.dev/cran/__linux__/${P3MVER}"'))" >> /root/.Rprofile
+    
+ARG BIOCONDUCTORVER='3.19'
+# Set BIOCONDUCTORVER as biocondutor version and add P3MVER as default repository for BIOCONDUCTOR in .Rprofile
+RUN mkdir -p /tmp/downloaded_packages/ && echo ${BIOCONDUCTORVER} > /tmp/downloaded_packages/BIOCONDUCTORVER.txt \
+    && tmp="https://packagemanager.posit.co/bioconductor/"$( echo ${P3MVER} | cut -f2 -d/ ) \
+    && echo "options(BioC_mirror='${tmp}')" >> /root/.Rprofile \
+    && echo "options(BIOCONDUCTOR_CONFIG_FILE='${tmp}/config.yaml')" >> /root/.Rprofile
 # ------------------------------------------------------------
 # System libraries
 # ------------------------------------------------------------
