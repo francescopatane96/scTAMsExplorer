@@ -32,7 +32,7 @@ required_pkgs <- c("qs", "shiny", "DT", "ggplot2", "dplyr", "tidyr", "tibble",
   }
 
 cat("Loading Seurat object...\n")
-seurat_obj <- qread(qs_path, nthreads=6)
+seurat_obj <- qread(qs_path, nthreads=1)
 
 # Alias umap 
 if (!"umap.harmony" %in% names(seurat_obj@reductions) &&
