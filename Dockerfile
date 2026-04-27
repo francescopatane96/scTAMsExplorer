@@ -1,82 +1,61 @@
 FROM rocker/r-ver:4.4.1
 
+# Use Posit Package Manager for precompiled Linux binaries
+# (jammy = Ubuntu 22.04, matches rocker/r-ver:4.4.1)
+RUN echo 'options(repos = c(CRAN = "https://packagemanager.posit.co/cran/__linux__/jammy/latest"))' \
+    >> /usr/local/lib/R/etc/Rprofile.site
+
 # ------------------------------------------------------------
-# System libraries needed by R deps:
-#   - Seurat / SeuratObject  -> HDF5, BLAS, igraph (glpk, gmp)
-#   - visNetwork / plotly    -> standard web deps
-#   - ggplot2 / patchwork    -> Cairo, fonts
-#   - hdWGCNA (Suggests)     -> GEOS, GDAL, udunits
+# System libraries
 # ------------------------------------------------------------
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libcurl4-openssl-dev \
-    libssl-dev \
-    libxml2-dev \
-    libpng-dev \
-    libjpeg-dev \
-    libtiff5-dev \
-    libfreetype6-dev \
-    libharfbuzz-dev \
-    libfribidi-dev \
-    libcairo2-dev \
-    libxt-dev \
-    libglpk-dev \
-    libgmp-dev \
-    libgeos-dev \
-    libgdal-dev \
-    libudunits2-dev \
-    libhdf5-dev \
-    libfontconfig1-dev \
-    zlib1g-dev \
+    libcurl4-openssl-dev libssl-dev libxml2-dev \
+    libpng-dev libjpeg-dev libtiff-dev \
+    libfreetype6-dev libharfbuzz-dev libfribidi-dev \
+    libcairo2-dev libxt-dev \
+    libglpk-dev libgmp-dev \
+    libgeos-dev libgdal-dev libudunits2-dev \
+    libhdf5-dev libfontconfig1-dev zlib1g-dev \
     git \
   && rm -rf /var/lib/apt/lists/*
 
 # ------------------------------------------------------------
-# Install CRAN packages needed by scTAMsExplorer
+# CRAN packages (binaries from P3M -> fast, no compilation)
 # ------------------------------------------------------------
 RUN R -e "install.packages(c( \
-    'shiny', \
-    'ggplot2', \
-    'dplyr', \
-    'tibble', \
-    'tidyr', \
-    'plotly', \
-    'DT', \
-    'qs', \
-    'enrichR', \
-    'patchwork', \
-    'scales', \
-    'stringr', \
-    'ggrepel', \
-    'visNetwork', \
-    'remotes', \
-    'BiocManager', \
-    'R.utils' \
-  ), repos = 'https://cloud.r-project.org')"
+    'shiny','ggplot2','dplyr','tibble','tidyr','plotly','DT','qs', \
+    'enrichR','patchwork','scales','stringr','ggrepel','visNetwork', \
+    'remotes','BiocManager','R.utils'))"
 
-# Seurat is heavy — separate layer for better caching
-RUN R -e "install.packages('Seurat', repos = 'https://cloud.r-project.org')"
+# Seurat — separate layer for cache
+RUN R -e "install.packages('Seurat')"
 
-# Bioconductor dependencies used (indirectly) by hdWGCNA
+# Bioconductor deps for hdWGCNA
 RUN R -e "BiocManager::install(c('WGCNA','GeneOverlap'), ask = FALSE, update = FALSE)"
 
-# hdWGCNA — required by the Modules tab of the app
-RUN R -e "remotes::install_github('smorabit/hdWGCNA', ref = 'dev', upgrade = 'never')"
+# ------------------------------------------------------------
+# GitHub installs — use PAT to avoid rate limit
+# ------------------------------------------------------------
+ARG GITHUB_PAT
+ENV GITHUB_PAT=${GITHUB_PAT}
 
-# ------------------------------------------------------------
-# Install scTAMsExplorer from GitHub
-# ------------------------------------------------------------
-#ARG PKG_REF=main
+# Pin hdWGCNA to a specific commit for reproducibility
+# (replace SHA with whatever commit you've tested working)
+RUN R -e "remotes::install_github('smorabit/hdWGCNA', \
+          ref = 'dev', upgrade = 'never')"
+
+ARG PKG_REF=main
 RUN R -e "remotes::install_github('francescopatane96/scTAMsExplorer', \
-         ref = 'main', upgrade = 'never')"
+          ref = '${PKG_REF}', upgrade = 'never')"
 
 # ------------------------------------------------------------
 # Entry point
 # ------------------------------------------------------------
 COPY run_app.R /usr/local/bin/run_app.R
-EXPOSE 3838
 
 ENV SEURAT_RDS=/data/atlas.rds
 ENV SHINY_PORT=3838
 ENV SHINY_HOST=0.0.0.0
 
+EXPOSE 3838
 CMD ["Rscript", "/usr/local/bin/run_app.R"]
