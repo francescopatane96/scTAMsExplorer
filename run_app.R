@@ -16,9 +16,14 @@ if (!file.exists(qs_path)) {
        call. = FALSE)
 }
 
-required_pkgs <- c("qs", "shiny", "DT", "ggplot2", "dplyr", "tidyr", "tibble",
-                     "plotly", "patchwork", "ggrepel", "visNetwork",
-                     "stringr", "scales", "enrichR", "Seurat", "scTAMsExplorer")
+pkgs <- readLines('NAMESPACE')
+pkgs <- pkgs[grep('Import', pkgs)]
+pkgs <- sapply(strsplit(pkgs, split='(', fixed=TRUE)), '[[, 2)
+pkgs <- sapply(strsplit(pkgs, split=',', fixed=TRUE)), '[[, 1)
+required_pkgs <- unique(pkgs)
+     #required_pkgs <- c("qs", "shiny", "DT", "ggplot2", "dplyr", "tidyr", "tibble",
+                     #"plotly", "patchwork", "ggrepel", "visNetwork",
+                     #"stringr", "scales", "enrichR", "Seurat", "scTAMsExplorer")
   for (pkg in required_pkgs) {
     print("ciao")
     if (!requireNamespace(pkg, quietly = TRUE)) {
