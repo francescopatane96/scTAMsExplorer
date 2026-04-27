@@ -1,7 +1,7 @@
 
 #!/usr/bin/env Rscript
 
-rds_path <- Sys.getenv("SEURAT_RDS", unset = "/data/atlas.rds")
+rds_path <- Sys.getenv("SEURAT_QS", unset = "/data/atlas.qs")
 port     <- as.integer(Sys.getenv("SHINY_PORT", unset = "3838"))
 host     <- Sys.getenv("SHINY_HOST", unset = "0.0.0.0")
 
@@ -22,7 +22,7 @@ suppressPackageStartupMessages({
 })
 
 cat("Loading Seurat object...\n")
-seurat_obj <- readRDS(rds_path)
+seurat_obj <- qread(rds_path)
 
 # Alias umap 
 if (!"umap.harmony" %in% names(seurat_obj@reductions) &&
