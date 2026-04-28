@@ -5,7 +5,7 @@
 GetTFNetwork <- function(obj, wgcna_name=NULL){
   if(is.null(wgcna_name)){wgcna_name <- obj@misc$active_wgcna}
   #CheckWGCNAName(seurat_obj, wgcna_name)
-  obj@misc[[wgcna_name]]$tf_net 
+  obj@misc[[wgcna_name]]$tf_net
 }
 
 #' Extract suitable metadata columns from a Seurat object
