@@ -34,7 +34,12 @@ RUN R -e "install.packages(c( \
     'remotes','BiocManager','R.utils'))"
 
 # Seurat — separate layer for cache
-RUN R -e "install.packages('Seurat')"
+RUN R -e "remotes::install_version('SeuratObject', version = '5.0.2', \
+          repos = 'https://cloud.r-project.org', upgrade = 'never')"
+
+# Seurat 5.1.0
+RUN R -e "remotes::install_version('Seurat', version = '5.1.0', \
+          repos = 'https://cloud.r-project.org', upgrade = 'never')"
 
 # Bioconductor deps for hdWGCNA
 RUN R -e "BiocManager::install(c('WGCNA','GeneOverlap'), ask = FALSE, update = FALSE)"
