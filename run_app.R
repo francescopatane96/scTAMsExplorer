@@ -18,8 +18,7 @@ if (!file.exists(qs_path)) {
 
 required_pkgs <- c("qs", "shiny", "DT", "ggplot2", "dplyr", "tidyr", "tibble",
                      "plotly", "patchwork", "ggrepel", "visNetwork",
-                     "stringr", "scales", "enrichR", "Seurat", "scTAMsExplorer", 
-                  "hdWGCNA")
+                     "stringr", "scales", "enrichR", "Seurat", "scTAMsExplorer")
   for (pkg in required_pkgs) {
     print("ciao")
     if (!requireNamespace(pkg, quietly = TRUE)) {
