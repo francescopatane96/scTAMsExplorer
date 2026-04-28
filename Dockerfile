@@ -52,8 +52,15 @@ ENV GITHUB_PAT=${GITHUB_PAT}
 
 # Pin hdWGCNA to a specific commit for reproducibility
 # (replace SHA with whatever commit you've tested working)
-RUN R -e "remotes::install_github('smorabit/hdWGCNA', \
-          ref = 'dev', upgrade = 'never')"
+RUN R -e "options(install.packages.check.source = 'no'); \
+          remotes::install_github('smorabit/hdWGCNA', \
+            ref = 'dev', \
+            upgrade = 'never', \
+            quiet = FALSE, \
+            verbose = TRUE, \
+            dependencies = TRUE); \
+          if (!requireNamespace('hdWGCNA', quietly = TRUE)) \
+            stop('hdWGCNA installation FAILED')"
 
 ARG PKG_REF=main
 RUN R -e "remotes::install_github('francescopatane96/scTAMsExplorer', \
