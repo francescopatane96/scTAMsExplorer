@@ -15,7 +15,7 @@ if (!file.exists(qs_path)) {
        "\nMount it with -v /host/path.qs:", qs_path, ":ro",
        call. = FALSE)
 }
-
+library(qs)
 cat("Loading Seurat object...\n")
 seurat_obj <- qread(qs_path, nthreads=1)
 
