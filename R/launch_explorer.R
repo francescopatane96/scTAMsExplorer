@@ -57,7 +57,7 @@ launch_explorer <- function(seurat_obj,
   if (ncol(seurat_obj) == 0L) {
     stop("`seurat_obj` contains no cells.", call. = FALSE)
   }
-
+#
   missing_pkg <- character(0)
   for (pkg in c("Seurat","enrichR","visNetwork","DT","plotly","ggrepel","patchwork")) {
     if (!requireNamespace(pkg, quietly = TRUE)) missing_pkg <- c(missing_pkg, pkg)
