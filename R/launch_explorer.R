@@ -57,20 +57,7 @@ launch_explorer <- function(seurat_obj,
   if (ncol(seurat_obj) == 0L) {
     stop("`seurat_obj` contains no cells.", call. = FALSE)
   }
-#
-  missing_pkg <- character(0)
-  for (pkg in c("Seurat","enrichR","visNetwork","DT","plotly","ggrepel","patchwork")) {
-    if (!requireNamespace(pkg, quietly = TRUE)) missing_pkg <- c(missing_pkg, pkg)
-  }
-  if (length(missing_pkg) > 0L) {
-    stop(
-      "The following packages are required but not installed:\n  ",
-      paste(missing_pkg, collapse = ", "),
-      "\nInstall with: install.packages(c(",
-      paste0('"', missing_pkg, '"', collapse = ", "), "))",
-      call. = FALSE
-    )
-  }
+
 
   message("Launching Seurat Atlas Explorer ...")
   message("  Cells:    ", ncol(seurat_obj))

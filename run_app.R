@@ -15,20 +15,6 @@ if (!file.exists(qs_path)) {
        "\nMount it with -v /host/path.qs:", qs_path, ":ro",
        call. = FALSE)
 }
-#
-required_pkgs <- c("qs", "shiny", "DT", "ggplot2", "dplyr", "tidyr", "tibble",
-                     "plotly", "patchwork", "ggrepel", "visNetwork",
-                     "stringr", "scales", "enrichR", "Seurat", "scTAMsExplorer")
-  for (pkg in required_pkgs) {
-    print("ciao")
-    if (!requireNamespace(pkg, quietly = TRUE)) {
-      stop("Package '", pkg, "' is required but not installed.", call. = FALSE)
-    }
-    
-    if (!paste0("package:", pkg) %in% search()) {
-      suppressMessages(suppressWarnings(attachNamespace(pkg)))
-    }
-  }
 
 cat("Loading Seurat object...\n")
 seurat_obj <- qread(qs_path, nthreads=1)
