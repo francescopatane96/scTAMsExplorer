@@ -25,7 +25,6 @@ required_pkgs <- c("qs", "shiny", "DT", "ggplot2", "dplyr", "tidyr", "tibble",
       stop("Package '", pkg, "' is required but not installed.", call. = FALSE)
     }
     
-    print(paste("library", pkg, "loaded"))
     if (!paste0("package:", pkg) %in% search()) {
       suppressMessages(suppressWarnings(attachNamespace(pkg)))
     }
