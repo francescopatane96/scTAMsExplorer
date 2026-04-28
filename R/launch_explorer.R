@@ -49,20 +49,7 @@ launch_explorer <- function(seurat_obj,
                              launch.browser = TRUE,
                              host           = "127.0.0.1",
                              ...) {
-  required_pkgs <- c("qs", "shiny", "DT", "ggplot2", "dplyr", "tidyr", "tibble",
-                     "plotly", "patchwork", "ggrepel", "visNetwork",
-                     "stringr", "scales", "enrichR", "Seurat")
-  for (pkg in required_pkgs) {
-    print("ciao")
-    if (!requireNamespace(pkg, quietly = TRUE)) {
-      stop("Package '", pkg, "' is required but not installed.", call. = FALSE)
-    }
-  
-    print(paste("library", pkg, "loaded"))
-    if (!paste0("package:", pkg) %in% search()) {
-      suppressMessages(suppressWarnings(attachNamespace(pkg)))
-    }
-  }
+
 
   if (!inherits(seurat_obj, "Seurat")) {
     stop("`seurat_obj` must be a Seurat object.", call. = FALSE)
