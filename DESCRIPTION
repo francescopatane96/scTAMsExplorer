@@ -21,6 +21,10 @@ Depends:
     shiny (>= 1.7.0),
     DT (>= 0.33)  
 Imports:
+    Seurat (>= 5.1.0),
+    SeuratObject (>= 5.0.2),
+    igraph,
+    testthat (>= 3.0.0)
     ggplot2 (>= 3.4.0),
     dplyr (>= 1.1.0),
     tibble (>= 3.2.0),
@@ -35,10 +39,6 @@ Imports:
     magrittr,
     qs (>= 0.26.3)
 Suggests:
-    Seurat (>= 5.1.0),
-    SeuratObject (>= 5.0.2),
-    igraph,
-    testthat (>= 3.0.0),
     knitr,
     rmarkdown
 VignetteBuilder: knitr
