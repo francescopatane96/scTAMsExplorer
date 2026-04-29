@@ -48,9 +48,10 @@ ARG GITHUB_PAT
 ENV GITHUB_PAT=${GITHUB_PAT}
 
 ARG PKG_REF=main
-RUN R -e "remotes::install_github('francescopatane96/scTAMsExplorer', \
+ARG PKG_SHA=unknown
+RUN echo "Cache buster: ${PKG_SHA}" \
+ && R -e "remotes::install_github('francescopatane96/scTAMsExplorer', \
           ref = '${PKG_REF}', upgrade = 'never')"
-
 # ------------------------------------------------------------
 # Entry point
 # ------------------------------------------------------------

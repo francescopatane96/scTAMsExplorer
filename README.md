@@ -71,6 +71,7 @@ library(scales)
 library(stringr)
 library(ggrepel)
 library(visNetwork)
+library(qs)
 ```
 
 ---
@@ -81,7 +82,7 @@ library(visNetwork)
 library(scTAMsExplorer)
 
 # Load your Seurat object
-seurat_obj <- readRDS("path/to/my_atlas.rds")
+seurat_obj <- readRDS("path/to/my_atlas.qs")
 
 # Launch the app — opens automatically in your default browser
 launch_explorer(seurat_obj)
