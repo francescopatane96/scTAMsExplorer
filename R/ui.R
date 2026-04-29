@@ -2,6 +2,21 @@
 # ui.R -- UI builder for scTAMsExplorer
 # ============================================================
 
+#' Build a feature card for the About page
+#'
+#' Internal layout helper. Renders a small card with an icon,
+#' a title and a bullet list of features.
+#'
+#' @param icon Character or HTML. Icon (typically an HTML entity).
+#' @param title Character. Card heading.
+#' @param items Character vector of bullet items.
+#'
+#' @return A `shiny::tags$div`.
+#'
+#' @importFrom shiny tags
+#'
+#' @keywords internal
+#' @noRd
 .feature_card <- function(icon, title, items) {
   shiny::tags$div(class = "feature-card",
     shiny::tags$div(class = "fc-icon", icon),
@@ -10,13 +25,58 @@
   )
 }
 
+#' Render an icon-prefixed tab label
+#'
+#' Internal helper to combine an HTML icon and a text label
+#' into a single `shiny::HTML` blob suitable for `tabPanel()`.
+#'
+#' @param icon_html Character. Raw HTML for the icon
+#'   (typically an entity such as `"&#8505;"`).
+#' @param text Character. Visible tab label.
+#'
+#' @return A `shiny::HTML` object.
+#'
+#' @importFrom shiny HTML
+#'
+#' @keywords internal
+#' @noRd
 .tab_label <- function(icon_html, text) {
   shiny::HTML(paste0('<span class="tab-icon">', icon_html, "</span>", text))
 }
 
 #' Build the Shiny UI for the Atlas Explorer
-#' @param metadata_choices Character vector of metadata column names.
-#' @return A Shiny UI definition.
+#'
+#' Constructs the dashboard UI with five main tabs (UMAP +
+#' Expression, DEGs + Volcano + Enrichment, TF Network,
+#' Co-expression Modules, TF Regulon Heatmap) plus an About
+#' landing page. All input widgets are populated from the
+#' supplied `metadata_choices`.
+#'
+#' This function is not exported: end users build the app via
+#' [launch_explorer()].
+#'
+#' @param metadata_choices Character vector of metadata column
+#'   names returned by [get_metadata_choices()].
+#'
+#' @return A Shiny UI definition (a `fluidPage` object).
+#'
+#' @section CSS:
+#' The UI calls `app_css()` to inject the dashboard stylesheet.
+#' That helper is defined elsewhere in the package (see e.g.
+#' `R/css.R`). Make sure it is available at load time.
+#'
+#' @importFrom shiny fluidPage tags HTML tabsetPanel tabPanel
+#' @importFrom shiny sidebarLayout sidebarPanel mainPanel
+#' @importFrom shiny fluidRow column h4 h5 hr br
+#' @importFrom shiny selectInput numericInput textInput sliderInput
+#' @importFrom shiny checkboxInput radioButtons actionButton
+#' @importFrom shiny conditionalPanel icon
+#' @importFrom shiny downloadButton uiOutput textOutput plotOutput
+#' @importFrom shiny verbatimTextOutput helpText
+#' @importFrom DT DTOutput
+#' @importFrom plotly plotlyOutput
+#' @importFrom visNetwork visNetworkOutput
+#'
 #' @keywords internal
 atlas_ui <- function(metadata_choices) {
 

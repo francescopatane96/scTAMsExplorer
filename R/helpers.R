@@ -2,28 +2,63 @@
 # helpers.R -- Shared utilities for SeuratAtlasExplorer
 # ============================================================
 
-GetTFNetwork <- function(obj, wgcna_name=NULL){
-  if(is.null(wgcna_name)){wgcna_name <- obj@misc$active_wgcna}
-  #CheckWGCNAName(seurat_obj, wgcna_name)
+#' Extract the TF regulatory network from a Seurat object
+#'
+#' Retrieves the transcription factor network stored in the misc
+#' slot of a Seurat object by hdWGCNA. If `wgcna_name` is NULL,
+#' the function uses the currently active hdWGCNA experiment
+#' (`obj@misc$active_wgcna`).
+#'
+#' @param obj A Seurat object with an hdWGCNA experiment that
+#'   includes a `tf_net` element.
+#' @param wgcna_name Character. Name of the hdWGCNA experiment
+#'   to query. Defaults to the active one.
+#'
+#' @return A data frame describing TF -> target relationships
+#'   (typically with columns `tf`, `gene`, `Gain`, `Cor`).
+#'
+#' @keywords internal
+GetTFNetwork <- function(obj, wgcna_name = NULL) {
+  if (is.null(wgcna_name)) {
+    wgcna_name <- obj@misc$active_wgcna
+  }
   obj@misc[[wgcna_name]]$tf_net
 }
 
 #' Extract suitable metadata columns from a Seurat object
+#'
+#' Returns the names of metadata columns that can be used as
+#' grouping variables in the dashboard. A column is "suitable"
+#' if it is a factor or a character vector.
+#'
 #' @param obj A Seurat object.
+#'
 #' @return Character vector of column names.
+#'
 #' @keywords internal
 get_metadata_choices <- function(obj) {
   meta     <- obj@meta.data
   suitable <- vapply(meta, function(x) is.factor(x) || is.character(x), logical(1))
   names(meta)[suitable]
 }
-#
 
-#' Sidebar plot-size control block
-#' @param id_prefix    Character prefix for input IDs.
-#' @param default_w,default_h Default display width/height in pixels.
-#' @param default_pt   Default font size in points.
-#' @return A tagList of Shiny UI elements.
+#' Build a sidebar block of plot-size controls
+#'
+#' Generates a tagList with paired display-size and
+#' download-size inputs (width, height, DPI, font size). Used
+#' across all five tabs to keep plot-control UI consistent.
+#'
+#' @param id_prefix Character prefix for the input IDs. The
+#'   resulting inputs are named `<prefix>_width`, `<prefix>_height`,
+#'   `<prefix>_dl_w`, `<prefix>_dl_h`, `<prefix>_dpi`, `<prefix>_pt`.
+#' @param default_w Default display width in pixels.
+#' @param default_h Default display height in pixels.
+#' @param default_pt Default font size in points.
+#'
+#' @return A `shiny::tagList()` of UI elements.
+#'
+#' @importFrom shiny tagList tags fluidRow column numericInput
+#'
 #' @keywords internal
 plot_size_controls <- function(id_prefix,
                                default_w  = 800,
@@ -56,9 +91,24 @@ plot_size_controls <- function(id_prefix,
 }
 
 #' Run EnrichR and return a tidy data frame
+#'
+#' Wraps `enrichR::enrichr()` to query a single database and
+#' return the result as a tidy data frame, with a `neg_log10_p`
+#' column added and term names truncated for plot readability.
+#' Adds a 1-second sleep before the API call to be polite.
+#'
 #' @param genes Character vector of gene symbols.
-#' @param db    EnrichR database name.
-#' @return A data frame or NULL.
+#' @param db Character. Name of an EnrichR database (e.g.
+#'   `"GO_Biological_Process_2023"`).
+#'
+#' @return A data frame with one row per enriched term, or
+#'   `NULL` if the query returned nothing.
+#'
+#' @importFrom enrichR enrichr
+#' @importFrom dplyr arrange mutate
+#' @importFrom rlang .data
+#' @importFrom stringr str_trunc
+#'
 #' @keywords internal
 run_enrichr_tidy <- function(genes, db) {
   Sys.sleep(1)
@@ -74,19 +124,32 @@ run_enrichr_tidy <- function(genes, db) {
 }
 
 #' Build an EnrichR bar plot
-#' @param df         Tidy EnrichR data frame.
-#' @param color_high High colour for fill gradient.
-#' @param title_txt  Plot title.
-#' @param n_terms    Number of terms.
-#' @param pt         Base font size.
+#'
+#' Renders a horizontal bar chart of the top enriched terms,
+#' sorted by Combined Score and coloured by significance.
+#'
+#' @param df Tidy EnrichR data frame, typically the output of
+#'   [run_enrichr_tidy()].
+#' @param color_high Character. The high colour for the fill
+#'   gradient (e.g. `"firebrick"`).
+#' @param title_txt Character. Plot title.
+#' @param n_terms Integer. Number of top terms to plot.
+#' @param pt Numeric. Base font size for the theme.
+#'
 #' @return A ggplot object.
+#'
+#' @importFrom utils head
+#' @importFrom rlang .data
+#' @importFrom ggplot2 ggplot aes geom_col scale_fill_gradient
+#' @importFrom ggplot2 coord_flip theme_minimal labs theme element_text
+#'
 #' @keywords internal
 make_enrich_plot <- function(df, color_high, title_txt, n_terms, pt) {
   df_top <- utils::head(df, n_terms)
   ggplot2::ggplot(
     df_top,
     ggplot2::aes(
-      x    = reorder(.data$Term, .data$Combined.Score),
+      x    = stats::reorder(.data$Term, .data$Combined.Score),
       y    = .data$Combined.Score,
       fill = -log10(.data$Adjusted.P.value + 1e-300)
     )

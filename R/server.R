@@ -4,12 +4,61 @@
 
 #' Build the Shiny server for the Atlas Explorer
 #'
-#' Returns a standard Shiny server function closed over seurat_obj and
-#' metadata_choices, so no global variables are required.
+#' Returns a standard Shiny server function closed over
+#' `seurat_obj` and `metadata_choices`, so no global variables
+#' are required. The returned closure wires up reactives,
+#' outputs and download handlers for all five tabs of the
+#' dashboard:
 #'
-#' @param seurat_obj       A Seurat object.
-#' @param metadata_choices Character vector from get_metadata_choices().
-#' @return A Shiny server function.
+#' \enumerate{
+#'   \item UMAP + Expression (DimPlot, FeaturePlot, VlnPlot,
+#'         DotPlot, DoHeatmap, marker discovery).
+#'   \item DEGs + Volcano + Enrichment.
+#'   \item TF interaction network (visNetwork).
+#'   \item hdWGCNA co-expression modules.
+#'   \item TF regulon dot heatmap with per-TF enrichment.
+#' }
+#'
+#' This function is not exported. End users start the app via
+#' [launch_explorer()], which wires this server together with
+#' [atlas_ui()] inside a [shiny::shinyApp()] call.
+#'
+#' @param seurat_obj A Seurat object. Must contain a
+#'   `umap.harmony` reduction. The regulon heatmap tab also
+#'   requires a `Population_level3` metadata column and an
+#'   hdWGCNA experiment with a TF network.
+#' @param metadata_choices Character vector of metadata column
+#'   names, typically from [get_metadata_choices()]. Used to
+#'   resolve user-selected grouping variables.
+#'
+#' @return A Shiny server function `function(input, output, session)`.
+#'
+#' @section Imports:
+#' Almost the entire ggplot2 / dplyr / shiny / DT / plotly /
+#' visNetwork surface is used here. To keep this header
+#' readable, broad imports are declared once at the package
+#' level in `R/scTAMsExplorer-package.R` (shiny, DT, ggplot2,
+#' dplyr, tidyr, magrittr). Below we only list function-specific
+#' imports that are NOT covered by those package-level imports.
+#'
+#' @importFrom Seurat DimPlot FeaturePlot VlnPlot DotPlot DoHeatmap
+#' @importFrom Seurat FindMarkers AverageExpression
+#' @importFrom Seurat Idents DefaultAssay
+#' @importFrom SeuratObject Idents<-
+#' @importFrom tibble rownames_to_column
+#' @importFrom plotly ggplotly renderPlotly
+#' @importFrom visNetwork visNetwork visEdges visNodes visOptions
+#' @importFrom visNetwork visInteraction visPhysics visLayout
+#' @importFrom visNetwork renderVisNetwork
+#' @importFrom ggrepel geom_text_repel
+#' @importFrom patchwork plot_annotation
+#' @importFrom scales rescale
+#' @importFrom stringr str_trunc
+#' @importFrom enrichR enrichr
+#' @importFrom grid unit
+#' @importFrom utils write.csv head
+#' @importFrom stats reorder
+#'
 #' @keywords internal
 atlas_server <- function(seurat_obj, metadata_choices) {
   function(input, output, session) {

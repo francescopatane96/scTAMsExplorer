@@ -17,20 +17,26 @@
 #'         positive/negative regulon activity, with per-TF enrichment.
 #' }
 #'
-#' @param seurat_obj A Seurat object. Must contain a \code{umap.harmony}
+#' @param seurat_obj A Seurat object. Must contain a `umap.harmony`
 #'   reduction. The regulon heatmap tab also requires a
-#'   \code{Population_level3} metadata column.
-#' @param port Integer. Port to listen on (default: random available port).
-#' @param launch.browser Logical. Open in the default browser? Default TRUE.
-#' @param host Character. Network interface to bind to. Default
-#'   \code{"127.0.0.1"} (localhost). Use \code{"0.0.0.0"} to expose on LAN.
-#' @param ... Additional arguments passed to \code{\link[shiny]{runApp}}.
+#'   `Population_level3` metadata column.
+#' @param port Integer. Port to listen on. Default `NULL` lets
+#'   Shiny pick a random available port.
+#' @param launch.browser Logical. Open the app in the default
+#'   browser? Default `TRUE`.
+#' @param host Character. Network interface to bind to.
+#'   Default `"127.0.0.1"` (localhost only). Use `"0.0.0.0"` to
+#'   expose the app on the local network.
+#' @param ... Additional arguments forwarded to
+#'   [shiny::runApp()] via the `options` argument of
+#'   [shiny::shinyApp()].
 #'
-#' @return Called for its side-effect. Returns invisibly when the app stops.
+#' @return Called for its side-effect (starts the Shiny app).
+#'   Returns the shinyApp object invisibly.
 #'
 #' @examples
 #' \dontrun{
-#' library(SeuratAtlasExplorer)
+#' library(scTAMsExplorer)
 #' obj <- readRDS("my_atlas.rds")
 #'
 #' # Standard launch
@@ -43,14 +49,16 @@
 #' launch_explorer(obj, host = "0.0.0.0", port = 3838)
 #' }
 #'
+#' @importFrom shiny shinyApp
+#'
 #' @export
 launch_explorer <- function(seurat_obj,
-                             port           = NULL,
-                             launch.browser = TRUE,
-                             host           = "127.0.0.1",
-                             ...) {
+                            port           = NULL,
+                            launch.browser = TRUE,
+                            host           = "127.0.0.1",
+                            ...) {
 
-
+  # ---- Input validation ----------------------------------
   if (!inherits(seurat_obj, "Seurat")) {
     stop("`seurat_obj` must be a Seurat object.", call. = FALSE)
   }
@@ -58,7 +66,7 @@ launch_explorer <- function(seurat_obj,
     stop("`seurat_obj` contains no cells.", call. = FALSE)
   }
 
-
+  # ---- Startup banner ------------------------------------
   message("Launching Seurat Atlas Explorer ...")
   message("  Cells:    ", ncol(seurat_obj))
   message("  Features: ", nrow(seurat_obj))
@@ -66,6 +74,7 @@ launch_explorer <- function(seurat_obj,
   mc <- get_metadata_choices(seurat_obj)
   message("  Metadata columns: ", paste(mc, collapse = ", "))
 
+  # ---- Build app ----------------------------------------
   ui     <- atlas_ui(mc)
   server <- atlas_server(seurat_obj, mc)
 
