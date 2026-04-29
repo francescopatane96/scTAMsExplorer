@@ -56,7 +56,7 @@ atlas_server <- function(seurat_obj, metadata_choices) {
       head(input$n_markers)
   })
 
-  output$marker_table <- DT::dataTableOutput({
+  output$marker_table <- DT::renderDataTable({
     req(markers_data())
     datatable(markers_data(), filter = "top",
               options = list(pageLength = 10, scrollX = TRUE))
@@ -160,7 +160,7 @@ atlas_server <- function(seurat_obj, metadata_choices) {
              abs_fc    = abs(avg_log2FC))
   })
 
-  output$deg_table <- DT::dataTableOutput({
+  output$deg_table <- DT::renderDataTable({
     req(degs_data())
     df <- degs_data() |>
       filter(p_val_adj < input$pval_cut, abs_fc >= input$lfc_cut) |>
@@ -257,12 +257,12 @@ atlas_server <- function(seurat_obj, metadata_choices) {
       select(Term, Overlap, P.value, Adjusted.P.value, Combined.Score, Genes) %>%
       mutate(across(where(is.numeric), ~ signif(.x, 3)))
   }
-  output$enrich_up_table <- DT::dataTableOutput({
+  output$enrich_up_table <- DT::renderDataTable({
     req(enrich_results()$up)
     datatable(enrich_tidy(enrich_results()$up, input$n_enrich),
               options = list(pageLength = 8, scrollX = TRUE), filter = "top")
   })
-  output$enrich_down_table <- DT::dataTableOutput({
+  output$enrich_down_table <- DT::renderDataTable({
     req(enrich_results()$down)
     datatable(enrich_tidy(enrich_results()$down, input$n_enrich),
               options = list(pageLength = 8, scrollX = TRUE), filter = "top")
@@ -400,7 +400,7 @@ atlas_server <- function(seurat_obj, metadata_choices) {
          module_names = sort(unique(hub_df$module)))
   })
 
-  output$module_size_table <- DT::dataTableOutput({
+  output$module_size_table <- DT::renderDataTable({
     req(coexp_data())
     datatable(coexp_data()$module_sizes, filter = "top",
               options = list(pageLength = 10, scrollX = TRUE))
@@ -422,7 +422,7 @@ atlas_server <- function(seurat_obj, metadata_choices) {
                 selected = coexp_data()$module_names[1])
   })
 
-  output$hub_genes_table <- DT::dataTableOutput({
+  output$hub_genes_table <- DT::renderDataTable({
     req(coexp_data())
     datatable(coexp_data()$hub_df, filter = "top",
               options = list(pageLength = 15, scrollX = TRUE))
@@ -478,7 +478,7 @@ atlas_server <- function(seurat_obj, metadata_choices) {
                height = paste0(input$coexp_enrich_height, "px"))
   })
   output$coexp_enrich_plot  <- renderPlot(coexp_enrich_plot_obj())
-  output$coexp_enrich_table <- DT::dataTableOutput({
+  output$coexp_enrich_table <- DT::renderDataTable({
     req(coexp_enrich_result())
     datatable(
       coexp_enrich_result() %>%
@@ -668,7 +668,7 @@ atlas_server <- function(seurat_obj, metadata_choices) {
   })
   output$reg_heatmap_plot  <- renderPlot({ req(reg_heatmap_plot_obj()); reg_heatmap_plot_obj() })
 
-  output$reg_summary_table <- DT::dataTableOutput({
+  output$reg_summary_table <- DT::renderDataTable({
     req(reg_heatmap_data())
     datatable(
       reg_heatmap_data()$df_wide %>% select(tf, n_pos, n_neg) %>% distinct() %>%
@@ -756,14 +756,14 @@ atlas_server <- function(seurat_obj, metadata_choices) {
                          reg_enrich_results()$tf, reg_enrich_results()$db, "Negative")
   })
 
-  output$reg_enrich_pos_table <- DT::dataTableOutput({
+  output$reg_enrich_pos_table <- DT::renderDataTable({
     req(reg_enrich_pos_df())
     datatable(reg_enrich_pos_df() %>%
         select(Term, Overlap, Adjusted.P.value, Combined.Score, Genes) %>%
         mutate(across(where(is.numeric), ~ signif(.x, 3))),
       filter = "top", options = list(pageLength = 8, scrollX = TRUE))
   })
-  output$reg_enrich_neg_table <- DT::dataTableOutput({
+  output$reg_enrich_neg_table <- DT::renderDataTable({
     req(reg_enrich_neg_df())
     datatable(reg_enrich_neg_df() %>%
         select(Term, Overlap, Adjusted.P.value, Combined.Score, Genes) %>%

@@ -17,6 +17,7 @@ get_metadata_choices <- function(obj) {
   suitable <- vapply(meta, function(x) is.factor(x) || is.character(x), logical(1))
   names(meta)[suitable]
 }
+#
 
 #' Sidebar plot-size control block
 #' @param id_prefix    Character prefix for input IDs.
