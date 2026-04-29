@@ -48,9 +48,9 @@ Important Note: This packages has been tested on R 4.4. on Linux systems, "libss
 
 
 ```r
-install.packages(c("shiny", "ggplot2", "dplyr", "tidyr", "tibble", "plotly", "DT", "enrichR", "patchwork", "scales", "stringr", "ggrepel", "visNetwork", "remotes", "qs"))'
-if (!requireNamespace("BiocManager", quietly = TRUE)) { install.packages("BiocManager") }'
-BiocManager::install(c("Seurat", "GeneOverlap", "GenomicRanges", "SummarizedExperiment", "impute", "preprocessCore"));'
+install.packages(c("shiny", "ggplot2", "dplyr", "tidyr", "tibble", "plotly", "DT", "enrichR", "patchwork", "scales", "stringr", "ggrepel", "visNetwork", "remotes", "qs"))
+if (!requireNamespace("BiocManager", quietly = TRUE)) { install.packages("BiocManager") }
+BiocManager::install(c("Seurat", "GeneOverlap", "GenomicRanges", "SummarizedExperiment", "impute", "preprocessCore"))
 remotes::install_github("francescopatane96/scTAMsExplorer")
 ```
 

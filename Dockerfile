@@ -29,9 +29,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # CRAN packages (binaries from P3M -> fast, no compilation)
 # ------------------------------------------------------------
 RUN R -e "install.packages(c( \
-    'shiny','ggplot2','dplyr','tibble','tidyr','plotly','DT','qs', \
-    'enrichR','patchwork','scales','stringr','ggrepel','visNetwork', \
+    'shiny','dplyr','tibble','tidyr','plotly','DT','qs', \
+    'enrichR','scales','stringr','ggrepel','visNetwork', \
     'remotes','BiocManager','R.utils'))"
+
+RUN R -e "remotes::install_version('ggplot2', version = '3.5.1', \
+          repos = 'https://cloud.r-project.org', upgrade = 'never')"
+
+RUN R -e "remotes::install_version('patchwork', version = '1.2.0', \
+          repos = 'https://cloud.r-project.org', upgrade = 'never')"
 
 # Seurat — separate layer for cache
 RUN R -e "remotes::install_version('SeuratObject', version = '5.0.2', \

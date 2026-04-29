@@ -99,7 +99,7 @@ atlas_server <- function(seurat_obj, metadata_choices) {
   markers_data <- eventReactive(input$markers, {
     req(input$cluster, input$umap_groupby)
     Idents(seurat_obj) <- input$umap_groupby
-    FindMarkers(seurat_obj, ident.1 = input$cluster, only.pos = TRUE) |>
+    FindMarkers(seurat_obj, ident.1 = input$cluster, only.pos = TRUE, max.cells.per.ident = 5000) |>
       rownames_to_column("gene") |>
       arrange(desc(avg_log2FC)) |>
       head(input$n_markers)
@@ -557,17 +557,16 @@ atlas_server <- function(seurat_obj, metadata_choices) {
                 choices = m, selected = "All modules")
   })
 
-  reg_heatmap_data <- eventReactive(input$run_reg_heatmap, {
-    withProgress(message = "Building TF regulon heatmap...", value = 0, {
-      incProgress(0.05, detail = "Loading TF network...")
-      net <- GetTFNetwork(seurat_obj) %>% filter(Gain >= input$reg_min_gain)
-      validate(need(nrow(net) > 0, "No edges after Gain filter."))
-
-      incProgress(0.15, detail = "Average expression per cluster...")
-      validate(need("Population_level3" %in% colnames(seurat_obj@meta.data),
-                    "Metadata column 'Population_level3' not found in the Seurat object."))
-      avg_mat <- AverageExpression(seurat_obj, group.by = "Population_level3",
-                                   assays = DefaultAssay(seurat_obj))[[1]]
+  avg_mat <- AverageExpression(
+    subset(
+      seurat_obj,
+      cells = unlist(lapply(unique(seurat_obj$Population_level3), function(cl) {
+        cells <- colnames(seurat_obj)[seurat_obj$Population_level3 == cl]
+        if (length(cells) > 5000) sample(cells, 5000) else cells
+      }))
+    ),
+    group.by = "Population_level3"
+  )[[1]]
       
       avg_mat      <- as.matrix(avg_mat)
       clusters     <- colnames(avg_mat)
