@@ -134,7 +134,7 @@ atlas_server <- function(seurat_obj, metadata_choices) {
                    group.by = input$umap_groupby, pt.size = 0)
       if (do_split) args$split.by <- input$split_by
       p <- do.call(VlnPlot, args)
-      p & theme(axis.text.x = element_text(size = pt, angle = 45, hjust = 1))
+      p + theme(axis.text.x = element_text(size = pt, angle = 45, hjust = 1))
 
     } else if (input$plot_type == "dot") {
       DotPlot(seurat_obj,

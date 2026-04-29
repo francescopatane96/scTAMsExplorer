@@ -2,6 +2,51 @@
 # helpers.R -- Shared utilities for SeuratAtlasExplorer
 # ============================================================
 
+#' @keywords internal
+GetModules <- function(obj, wgcna_name=NULL){
+  
+  # get data from active assay if wgcna_name is not given
+  if(is.null(wgcna_name)){wgcna_name <- obj@misc$active_wgcna}
+  
+  obj@misc[[wgcna_name]]$wgcna_modules
+}
+
+
+
+#' @keywords internal
+GetHubGenes <- function(
+    obj,
+    n_hubs = 10,
+    mods = NULL,
+    wgcna_name=NULL
+){
+  
+  if(is.null(wgcna_name)){wgcna_name <- obj@misc$active_wgcna}
+  
+  # get the modules table
+  modules <- GetModules(obj, wgcna_name) %>% subset(module != 'grey')
+  
+  if(is.null(mods)){
+    mods <- levels(modules$module); mods <- mods[mods != 'grey']
+  } else{
+    if(!all(mods %in% modules$module)){
+      stop("Invalid selection for mods.")
+    }
+  }
+  
+  #get hub genes:
+  hub_df <- do.call(rbind, lapply(mods, function(cur_mod){
+    cur <- subset(modules, module == cur_mod)
+    cur <- cur[,c('gene_name', 'module', paste0('kME_', cur_mod))]
+    names(cur)[3] <- 'kME'
+    cur <- dplyr::arrange(cur, desc(kME))
+    cur %>% dplyr::slice_max(n=n_hubs, order_by=kME)
+  }))
+  rownames(hub_df) <- 1:nrow(hub_df)
+  hub_df
+  
+}
+
 #' Extract the TF regulatory network from a Seurat object
 #'
 #' Retrieves the transcription factor network stored in the misc
