@@ -24,7 +24,6 @@ Imports:
     Seurat (>= 5.1.0),
     SeuratObject (>= 5.0.2),
     igraph,
-    testthat (>= 3.0.0)
     ggplot2 (>= 3.4.0),
     dplyr (>= 1.1.0),
     tibble (>= 3.2.0),
@@ -40,6 +39,7 @@ Imports:
     qs (>= 0.26.3)
 Suggests:
     knitr,
+    testthat (>= 3.0.0),
     rmarkdown
 VignetteBuilder: knitr
 URL: https://github.com/francescopatane96/scTAMsExplorer

@@ -41,39 +41,20 @@ wait until the seurat object has been completely loaded (the terminal should dis
 
 ## Installation
 
-### 1 · Install from GitHub
+Important Note: This packages has been tested on R 4.4. on Linux systems, "libssl-dev" and "libglpk-dev" need to be installed
+
+
+### 1 · Install required dependencies
+
 
 ```r
-# Install remotes if needed
-install.packages("remotes")
-
-# Install SeuratAtlasExplorer
+install.packages(c("shiny", "ggplot2", "dplyr", "tidyr", "tibble", "plotly", "DT", "enrichR", "patchwork", "scales", "stringr", "ggrepel", "visNetwork", "remotes", "qs"))'
+if (!requireNamespace("BiocManager", quietly = TRUE)) { install.packages("BiocManager") }'
+BiocManager::install(c("Seurat", "GeneOverlap", "GenomicRanges", "SummarizedExperiment", "impute", "preprocessCore"));'
 remotes::install_github("francescopatane96/scTAMsExplorer")
 ```
 
-### 2 · Install required dependencies
-
-Most dependencies are installed automatically. If any are missing, install them manually:
-
-```r
-# CRAN packages
-install.packages(c(
-  "shiny", "ggplot2", "dplyr", "tidyr", "tibble",
-  "plotly", "DT", "enrichR", "patchwork", "scales",
-  "stringr", "ggrepel", "visNetwork"
-))
-
-# Bioconductor / GitHub packages
-if (!requireNamespace("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
-
-BiocManager::install("Seurat")   # if not already installed
-
-# hdWGCNA (required for co-expression module tab)
-remotes::install_github("smorabit/hdWGCNA", ref = "dev")
-```
-
-### 3 · Import required dependencies
+### 2 · Import required dependencies
 
 ```
 library(shiny)
