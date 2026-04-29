@@ -1,6 +1,6 @@
 Package: scTAMsExplorer
 Title: Interactive Single-Cell RNA-seq Atlas Explorer
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: 
     person("Francesco Patanè", 
            email = "francesco.patane@ulb.be", 
