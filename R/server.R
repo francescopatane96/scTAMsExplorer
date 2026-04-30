@@ -848,7 +848,7 @@ atlas_server <- function(seurat_obj, metadata_choices) {
   output$download_reg_enrich_neg_csv <- downloadHandler(
     filename = function() paste0("NEG_", input$reg_enrich_tf, "_", input$reg_enrich_db, ".csv"),
     content  = function(file) write.csv(reg_enrich_results()$neg, file, row.names = FALSE))
-}
+
 
   } # end server function
 
