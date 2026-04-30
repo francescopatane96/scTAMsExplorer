@@ -82,7 +82,7 @@ library(qs)
 library(scTAMsExplorer)
 
 # Load your Seurat object
-seurat_obj <- readRDS("path/to/my_atlas.qs")
+seurat_obj <- readqs("path/to/my_atlas.qs")
 
 # Launch the app — opens automatically in your default browser
 launch_explorer(seurat_obj)
