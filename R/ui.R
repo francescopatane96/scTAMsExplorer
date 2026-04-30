@@ -223,12 +223,8 @@ atlas_ui <- function(metadata_choices) {
                   "Population_level3" else metadata_choices[1]),
               shiny::uiOutput("cluster_selector"),
               shiny::h4("Expression"),
-              selectizeInput(
-                "feature",
-                "Gene / Feature:",
-                choices = NULL,
-                selected = "MS4A1"
-              ),
+              textInput("feature", "Gene / Feature:", value = "MS4A1"),
+              actionButton("go_feature", "OK"),
               shiny::textInput("feature2", "Gene 2 (blend / heatmap / dot):",
                                value = "CD3D"),
               shiny::radioButtons("plot_type", "Plot type:",

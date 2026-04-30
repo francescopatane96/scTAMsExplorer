@@ -63,115 +63,212 @@
 atlas_server <- function(seurat_obj, metadata_choices) {
   function(input, output, session) {
 
-  # ================================================
-  # TAB 1
-  # ================================================
+    # ================================================
+    # TAB 1
+    # ================================================
     library(patchwork)
     
-    updateSelectizeInput(
-      session,
-      "feature",
-      choices = rownames(seurat_obj),
-      server = TRUE
+    # -----------------------------
+    # Gene trigger (NUOVO)
+    # -----------------------------
+    feature_selected <- eventReactive(input$go_feature, {
+      req(input$feature)
+      trimws(input$feature)
+    })
+    
+    # -----------------------------
+    # Select cluster UI
+    # -----------------------------
+    output$cluster_selector <- renderUI({
+      req(input$umap_groupby)
+      
+      choices <- sort(unique(as.character(
+        seurat_obj@meta.data[[input$umap_groupby]]
+      )))
+      
+      selectInput(
+        "cluster",
+        paste0("Cluster (", input$umap_groupby, "):"),
+        choices = choices,
+        selected = choices[1]
+      )
+    })
+    
+    # -----------------------------
+    # UMAP plot
+    # -----------------------------
+    umap_plot_obj <- reactive({
+      req(input$umap_groupby)
+      
+      DimPlot(
+        seurat_obj,
+        reduction = "umap.harmony",
+        group.by = input$umap_groupby,
+        label = TRUE,
+        label.size = input$umap_pt / 3
+      ) +
+        theme_minimal(base_size = input$umap_pt)
+    })
+    
+    output$umap_container <- renderUI({
+      req(input$umap_width, input$umap_height)
+      
+      plotOutput(
+        "umap",
+        width  = paste0(input$umap_width, "px"),
+        height = paste0(input$umap_height, "px")
+      )
+    })
+    
+    output$umap <- renderPlot({
+      umap_plot_obj()
+    })
+    
+    output$download_umap <- downloadHandler(
+      filename = function() paste0("umap_", input$umap_groupby, ".png"),
+      content  = function(file)
+        ggsave(
+          file,
+          umap_plot_obj(),
+          width  = input$umap_dl_w,
+          height = input$umap_dl_h,
+          dpi    = input$umap_dpi
+        )
     )
-
-  output$cluster_selector <- renderUI({
-    req(input$umap_groupby)
-    choices <- sort(unique(as.character(seurat_obj@meta.data[[input$umap_groupby]])))
-    selectInput("cluster", paste0("Cluster (", input$umap_groupby, "):"),
-                choices = choices, selected = choices[1])
-  })
-
-  umap_plot_obj <- reactive({
-    req(input$umap_groupby)
-    DimPlot(seurat_obj, reduction = "umap.harmony",
-            group.by = input$umap_groupby, label = TRUE,
-            label.size = input$umap_pt / 3) +
-      theme_minimal(base_size = input$umap_pt)
-  })
-
-  output$umap_container <- renderUI({
-    req(input$umap_width, input$umap_height)
-    plotOutput("umap", width = paste0(input$umap_width, "px"),
-                       height = paste0(input$umap_height, "px"))
-  })
-  output$umap <- renderPlot({ umap_plot_obj() })
-
-  output$download_umap <- downloadHandler(
-    filename = function() paste0("umap_", input$umap_groupby, ".png"),
-    content  = function(file)
-      ggsave(file, umap_plot_obj(),
-             width = input$umap_dl_w, height = input$umap_dl_h, dpi = input$umap_dpi)
-  )
-
-  markers_data <- eventReactive(input$markers, {
-    req(input$cluster, input$umap_groupby)
-    Idents(seurat_obj) <- input$umap_groupby
-    FindMarkers(seurat_obj, ident.1 = input$cluster, only.pos = TRUE, max.cells.per.ident = 5000) |>
-      rownames_to_column("gene") |>
-      arrange(desc(avg_log2FC)) |>
-      head(input$n_markers)
-  })
-
-  output$marker_table <- DT::renderDataTable({
-    req(markers_data())
-    datatable(markers_data(), filter = "top",
-              options = list(pageLength = 10, scrollX = TRUE))
-  })
-  output$download_markers <- downloadHandler(
-    filename = function() paste0("markers_", input$cluster, ".csv"),
-    content  = function(file) write.csv(markers_data(), file, row.names = FALSE)
-  )
-
-  expr_plot_obj <- reactive({
-    req(input$umap_groupby)
-    Idents(seurat_obj) <- input$umap_groupby
-    pt      <- input$expr_pt
-    do_split <- isTRUE(input$use_split) && nchar(trimws(input$split_by)) > 0
-
-    if (input$plot_type == "feature") {
-      feats <- if (isTRUE(input$blend_mode))
-        c(input$feature, input$feature2) else input$feature
-      args <- list(seurat_obj, features = feats, reduction = "umap.harmony",
-                   pt.size = 1, blend = isTRUE(input$blend_mode), combine=FALSE)
-      if (do_split && !isTRUE(input$blend_mode)) args$split.by <- input$split_by
-      do.call(FeaturePlot, args)
-
-    } else if (input$plot_type == "vln") {
-      args <- list(seurat_obj, features = input$feature,
-                   group.by = input$umap_groupby, pt.size = 0)
-      if (do_split) args$split.by <- input$split_by
-      p <- do.call(VlnPlot, args)
-      p + theme(axis.text.x = element_text(size = pt, angle = 45, hjust = 1))
-
-    } else if (input$plot_type == "dot") {
-      DotPlot(seurat_obj,
-              features = unique(c(input$feature, input$feature2)),
-              group.by = input$umap_groupby) +
-        theme_minimal(base_size = pt) +
-        theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-    } else if (input$plot_type == "heatmap") {
-      DoHeatmap(seurat_obj,
-                features = unique(c(input$feature, input$feature2)),
-                group.by = input$umap_groupby, angle = 45, size = pt / 3)
-    }
-  })
-
-  output$expr_container <- renderUI({
-    req(input$expr_width, input$expr_height)
-    plotOutput("expr_plot", width  = paste0(input$expr_width,  "px"),
-                            height = paste0(input$expr_height, "px"))
-  })
-  output$expr_plot <- renderPlot(expr_plot_obj())
-
-  output$download_expr_plot <- downloadHandler(
-    filename = function() paste0("expr_", input$feature, ".png"),
-    content  = function(file)
-      ggsave(file, expr_plot_obj(),
-             width = input$expr_dl_w, height = input$expr_dl_h, dpi = input$expr_dpi)
-  )
-
+    
+    # -----------------------------
+    # Markers
+    # -----------------------------
+    markers_data <- eventReactive(input$markers, {
+      req(input$cluster, input$umap_groupby)
+      
+      Idents(seurat_obj) <- input$umap_groupby
+      
+      FindMarkers(
+        seurat_obj,
+        ident.1 = input$cluster,
+        only.pos = TRUE,
+        max.cells.per.ident = 5000
+      ) |>
+        rownames_to_column("gene") |>
+        arrange(desc(avg_log2FC)) |>
+        head(input$n_markers)
+    })
+    
+    output$marker_table <- DT::renderDataTable({
+      req(markers_data())
+      
+      datatable(
+        markers_data(),
+        filter = "top",
+        options = list(pageLength = 10, scrollX = TRUE)
+      )
+    })
+    
+    output$download_markers <- downloadHandler(
+      filename = function() paste0("markers_", input$cluster, ".csv"),
+      content  = function(file)
+        write.csv(markers_data(), file, row.names = FALSE)
+    )
+    
+    # -----------------------------
+    # Expression plots
+    # -----------------------------
+    expr_plot_obj <- reactive({
+      req(input$umap_groupby)
+      
+      Idents(seurat_obj) <- input$umap_groupby
+      
+      pt <- input$expr_pt
+      do_split <- isTRUE(input$use_split) &&
+        nchar(trimws(input$split_by)) > 0
+      
+      if (input$plot_type == "feature") {
+        
+        feats <- if (isTRUE(input$blend_mode))
+          c(feature_selected(), input$feature2)
+        else
+          feature_selected()
+        
+        args <- list(
+          seurat_obj,
+          features = feats,
+          reduction = "umap.harmony",
+          pt.size = 1,
+          blend = isTRUE(input$blend_mode),
+          combine = FALSE
+        )
+        
+        if (do_split && !isTRUE(input$blend_mode)) {
+          args$split.by <- input$split_by
+        }
+        
+        do.call(FeaturePlot, args)
+        
+      } else if (input$plot_type == "vln") {
+        
+        args <- list(
+          seurat_obj,
+          features = feature_selected(),
+          group.by = input$umap_groupby,
+          pt.size = 0
+        )
+        
+        if (do_split) args$split.by <- input$split_by
+        
+        p <- do.call(VlnPlot, args)
+        
+        p + theme(
+          axis.text.x = element_text(size = pt, angle = 45, hjust = 1)
+        )
+        
+      } else if (input$plot_type == "dot") {
+        
+        DotPlot(
+          seurat_obj,
+          features = unique(c(feature_selected(), input$feature2)),
+          group.by = input$umap_groupby
+        ) +
+          theme_minimal(base_size = pt) +
+          theme(axis.text.x = element_text(angle = 45, hjust = 1))
+        
+      } else if (input$plot_type == "heatmap") {
+        
+        DoHeatmap(
+          seurat_obj,
+          features = unique(c(feature_selected(), input$feature2)),
+          group.by = input$umap_groupby,
+          angle = 45,
+          size = pt / 3
+        )
+      }
+    })
+    
+    output$expr_container <- renderUI({
+      req(input$expr_width, input$expr_height)
+      
+      plotOutput(
+        "expr_plot",
+        width  = paste0(input$expr_width, "px"),
+        height = paste0(input$expr_height, "px")
+      )
+    })
+    
+    output$expr_plot <- renderPlot({
+      expr_plot_obj()
+    })
+    
+    output$download_expr_plot <- downloadHandler(
+      filename = function() paste0("expr_", input$feature, ".png"),
+      content  = function(file)
+        ggsave(
+          file,
+          expr_plot_obj(),
+          width  = input$expr_dl_w,
+          height = input$expr_dl_h,
+          dpi    = input$expr_dpi
+        )
+    )
   # ================================================
   # TAB 2
   # ================================================
