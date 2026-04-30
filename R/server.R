@@ -255,7 +255,8 @@ atlas_server <- function(seurat_obj, metadata_choices) {
     })
     
     output$expr_plot <- renderPlot({
-      expr_plot_obj()
+      p <- expr_plot_obj()
+      grid::grid.draw(p)
     })
     
     output$download_expr_plot <- downloadHandler(
