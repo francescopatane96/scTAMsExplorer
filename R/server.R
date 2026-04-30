@@ -645,8 +645,8 @@ atlas_server <- function(seurat_obj, metadata_choices) {
       incProgress(1, detail = "Done.")
       list(df_long = df_long, df_wide = df_wide, tfs_use = tfs_use,
            clusters = clusters, module = input$reg_selected_module, net = net)
-    })
-  })
+    }
+  }
 
   output$reg_enrich_tf_selector <- renderUI({
     if (isTruthy(reg_heatmap_data())) {
