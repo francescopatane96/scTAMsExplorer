@@ -47,7 +47,7 @@ RUN R -e "remotes::install_version('SeuratObject', version = '5.0.2', \
 RUN R -e "remotes::install_version('Seurat', version = '5.1.0', \
           repos = 'https://cloud.r-project.org', upgrade = 'never')"
 
-RUN R -e "devtools::install_github('immunogenomics/presto')"
+RUN R -e "install_github('immunogenomics/presto', upgrade='never')"
 
 # ------------------------------------------------------------
 # GitHub installs — use PAT to avoid rate limit
