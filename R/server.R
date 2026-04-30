@@ -550,12 +550,19 @@ atlas_server <- function(seurat_obj, metadata_choices) {
 # ================================================
 
   output$reg_module_selector <- renderUI({
-    mods <- tryCatch({
-      m <- unique(GetModules(seurat_obj)$module)
-      c("All modules", sort(m[m != "grey"]))
-    }, error = function(e) "All modules")
-    selectInput("reg_selected_module", "Filter TFs by module:",
-                choices = mods, selected = "All modules")
+    m <- tryCatch({
+      mods <- unique(GetModules(seurat_obj)$module)
+      c("All modules", sort(mods[mods != "grey"]))
+    }, error = function(e) {
+      "All modules"
+    })
+    
+    selectInput(
+      "reg_selected_module",
+      "Filter TFs by module:",
+      choices = m,
+      selected = "All modules"
+    )
   })
   
   # ----------------------------------------------------------------

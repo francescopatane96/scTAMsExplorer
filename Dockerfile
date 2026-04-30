@@ -31,7 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN R -e "install.packages(c( \
     'shiny','dplyr','tibble','tidyr','plotly','DT','qs', \
     'enrichR','scales','stringr','ggrepel','visNetwork', \
-    'remotes','BiocManager','R.utils'))"
+    'remotes','BiocManager','devtools','R.utils'))"
 
 RUN R -e "remotes::install_version('ggplot2', version = '3.5.1', \
           repos = 'https://cloud.r-project.org', upgrade = 'never')"
@@ -46,6 +46,8 @@ RUN R -e "remotes::install_version('SeuratObject', version = '5.0.2', \
 # Seurat 5.1.0
 RUN R -e "remotes::install_version('Seurat', version = '5.1.0', \
           repos = 'https://cloud.r-project.org', upgrade = 'never')"
+
+RUN R -e "devtools::install_github('immunogenomics/presto')"
 
 # ------------------------------------------------------------
 # GitHub installs — use PAT to avoid rate limit
