@@ -67,6 +67,13 @@ atlas_server <- function(seurat_obj, metadata_choices) {
   # TAB 1
   # ================================================
     library(patchwork)
+    
+    updateSelectizeInput(
+      session,
+      "feature",
+      choices = rownames(seurat_obj),
+      server = TRUE
+    )
 
   output$cluster_selector <- renderUI({
     req(input$umap_groupby)
