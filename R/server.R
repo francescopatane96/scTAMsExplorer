@@ -187,18 +187,14 @@ atlas_server <- function(seurat_obj, metadata_choices) {
       
       blend <- isTRUE(input$blend_mode)
       
-      # ⚠️ regola di stabilità: blend + split NON supportati insieme
       if (blend && do_split) {
         showNotification(
-          "Blend + Split not supported together. Disable one option.",
+          "Blend + Split not supported together",
           type = "error"
         )
         return(NULL)
       }
       
-      # =========================
-      # FEATURE PLOT
-      # =========================
       if (input$plot_type == "feature") {
         
         feats <- if (blend)
@@ -212,40 +208,34 @@ atlas_server <- function(seurat_obj, metadata_choices) {
           reduction = "umap.harmony",
           pt.size = 1,
           blend = blend,
-          combine = TRUE
+          combine = FALSE   # 🔥 chiave
         )
         
         if (do_split) {
           args$split.by <- input$split_by
         }
         
-        do.call(FeaturePlot, args)
+        plist <- do.call(FeaturePlot, args)
         
-        # =========================
-        # VIOLIN PLOT
-        # =========================
+        # 🔥 SE È LISTA → COMBINA TU
+        if (is.list(plist)) {
+          patchwork::wrap_plots(plist)
+        } else {
+          plist
+        }
+        
       } else if (input$plot_type == "vln") {
         
-        args <- list(
+        p <- VlnPlot(
           seurat_obj,
           features = feature_selected(),
           group.by = input$umap_groupby,
-          pt.size = 0
+          pt.size = 0,
+          split.by = if (do_split) input$split_by else NULL
         )
         
-        if (do_split) {
-          args$split.by <- input$split_by
-        }
+        p + theme(axis.text.x = element_text(size = pt, angle = 45, hjust = 1))
         
-        p <- do.call(VlnPlot, args)
-        
-        p + theme(
-          axis.text.x = element_text(size = pt, angle = 45, hjust = 1)
-        )
-        
-        # =========================
-        # DOT PLOT
-        # =========================
       } else if (input$plot_type == "dot") {
         
         DotPlot(
@@ -256,9 +246,6 @@ atlas_server <- function(seurat_obj, metadata_choices) {
           theme_minimal(base_size = pt) +
           theme(axis.text.x = element_text(angle = 45, hjust = 1))
         
-        # =========================
-        # HEATMAP
-        # =========================
       } else if (input$plot_type == "heatmap") {
         
         DoHeatmap(
@@ -283,6 +270,7 @@ atlas_server <- function(seurat_obj, metadata_choices) {
     
     output$expr_plot <- renderPlot({
       p <- expr_plot_obj()
+      req(p)
       print(p)
     })
     
