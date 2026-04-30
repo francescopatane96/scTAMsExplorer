@@ -206,7 +206,7 @@ atlas_server <- function(seurat_obj, metadata_choices) {
           seurat_obj,
           features = feats,
           reduction = "umap.harmony",
-          pt.size = 1,
+          pt.size = 0.2,
           blend = blend,
           combine = FALSE   # 🔥 chiave
         )
