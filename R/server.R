@@ -196,7 +196,7 @@ atlas_server <- function(seurat_obj, metadata_choices) {
           reduction = "umap.harmony",
           pt.size = 1,
           blend = isTRUE(input$blend_mode),
-          combine = FALSE
+          combine = TRUE
         )
         
         if (do_split && !isTRUE(input$blend_mode)) {
