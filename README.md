@@ -32,7 +32,7 @@ Via the docker desktop app, go to Settings/Resources/Resource Allocation/Memory 
 
 ```
 docker run --rm -p 3838:3838 \
-     -v /path/to/your/seurat_object.rds:/data/atlas.rds:ro \
+     -v /path/to/your/seurat_object.qs:/data/atlas.qs:ro \
      ghcr.io/francescopatane96/sctamsexplorer:latest
 ```
 wait until the seurat object has been completely loaded (the terminal should display "Listening on http://0.0.0.0:3838")
