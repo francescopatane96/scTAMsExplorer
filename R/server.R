@@ -126,7 +126,7 @@ atlas_server <- function(seurat_obj, metadata_choices) {
       feats <- if (isTRUE(input$blend_mode))
         c(input$feature, input$feature2) else input$feature
       args <- list(seurat_obj, features = feats, reduction = "umap.harmony",
-                   pt.size = 1, blend = isTRUE(input$blend_mode))
+                   pt.size = 1, blend = isTRUE(input$blend_mode), combine=FALSE)
       if (do_split && !isTRUE(input$blend_mode)) args$split.by <- input$split_by
       do.call(FeaturePlot, args)
 
