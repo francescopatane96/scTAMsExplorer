@@ -554,24 +554,48 @@ atlas_server <- function(seurat_obj, metadata_choices) {
       c("All modules", sort(m[m != "grey"]))
     }, error = function(e) "All modules")
     selectInput("reg_selected_module", "Filter TFs by module:",
-                choices = m, selected = "All modules")
+                choices = mods, selected = "All modules")
   })
-
-  avg_mat <- AverageExpression(
-    subset(
-      seurat_obj,
-      cells = unlist(lapply(unique(seurat_obj$Population_level3), function(cl) {
+  
+  # ----------------------------------------------------------------
+  # Cached AverageExpression on a downsampled subset.
+  # Computing AverageExpression on full atlas is the heaviest single
+  # operation in the app. Downsampling to 5000 cells per cluster keeps
+  # the means statistically stable while cutting memory by an order
+  # of magnitude. Cached as a reactive so it runs once per session.
+  # ----------------------------------------------------------------
+  avg_expr_cached <- reactive({
+    validate(need("Population_level3" %in% colnames(seurat_obj@meta.data),
+                  "Metadata column 'Population_level3' not found in the Seurat object."))
+    
+    cells_keep <- unlist(lapply(
+      unique(seurat_obj$Population_level3),
+      function(cl) {
         cells <- colnames(seurat_obj)[seurat_obj$Population_level3 == cl]
         if (length(cells) > 5000) sample(cells, 5000) else cells
-      }))
-    ),
-    group.by = "Population_level3"
-  )[[1]]
+      }
+    ))
+    
+    am <- AverageExpression(
+      subset(seurat_obj, cells = cells_keep),
+      group.by = "Population_level3"
+    )[[1]]
+    
+    as.matrix(am)
+  })
+  
+  reg_heatmap_data <- eventReactive(input$run_reg_heatmap, {
+    withProgress(message = "Building TF regulon heatmap...", value = 0, {
       
-      avg_mat      <- as.matrix(avg_mat)
+      incProgress(0.05, detail = "Loading TF network...")
+      net <- GetTFNetwork(seurat_obj) %>% filter(Gain >= input$reg_min_gain)
+      validate(need(nrow(net) > 0, "No edges after Gain filter."))
+      
+      incProgress(0.15, detail = "Average expression per cluster...")
+      avg_mat      <- avg_expr_cached()
       clusters     <- colnames(avg_mat)
       genes_in_mat <- rownames(avg_mat)
-
+      
       incProgress(0.30, detail = "Filtering TFs...")
       module_tfs <- character(0)
       if (!is.null(input$reg_selected_module) && input$reg_selected_module != "All modules") {
@@ -582,11 +606,12 @@ atlas_server <- function(seurat_obj, metadata_choices) {
       }
       manual_tfs <- if (nchar(trimws(input$reg_tf_filter)) > 0)
         strsplit(input$reg_tf_filter, ",\\s*")[[1]] %>% trimws() else character(0)
-
+      
       all_tfs <- unique(net$tf)
       if (length(module_tfs) > 0) {
         all_tfs <- intersect(all_tfs, module_tfs)
-        validate(need(length(all_tfs) > 0, paste0("No TFs from module '", input$reg_selected_module, "'.")))
+        validate(need(length(all_tfs) > 0,
+                      paste0("No TFs from module '", input$reg_selected_module, "'.")))
       }
       tfs_valid <- all_tfs[all_tfs %in% genes_in_mat]
       min_sz    <- input$reg_min_regulon_size
@@ -596,7 +621,7 @@ atlas_server <- function(seurat_obj, metadata_choices) {
         max(pos_n, neg_n) >= min_sz
       }, logical(1))]
       validate(need(length(tfs_valid) > 0, "No TFs pass filters."))
-
+      
       if (length(manual_tfs) > 0) {
         tfs_use <- intersect(manual_tfs, tfs_valid)
         validate(need(length(tfs_use) > 0, "Specified TFs not in filtered network."))
@@ -605,19 +630,20 @@ atlas_server <- function(seurat_obj, metadata_choices) {
         tfs_use   <- tfs_valid[order(reg_sizes, decreasing = TRUE)][
           seq_len(min(input$reg_top_n_tfs, length(tfs_valid)))]
       }
-
+      
       incProgress(0.50, detail = "Building expression matrix...")
-
       
       safe_regulon_mean <- function(genes) {
         if (length(genes) == 0) return(rep(NA_real_, length(clusters)))
         if (length(genes) == 1) return(as.numeric(avg_mat[genes, ]))
         as.numeric(colMeans(avg_mat[genes, , drop = FALSE], na.rm = TRUE))
       }
-
+      
       rows <- lapply(tfs_use, function(tf_name) {
-        pos_genes <- net %>% filter(tf == !!tf_name, Cor > 0) %>% pull(gene) %>% unique() %>% intersect(genes_in_mat)
-        neg_genes <- net %>% filter(tf == !!tf_name, Cor < 0) %>% pull(gene) %>% unique() %>% intersect(genes_in_mat)
+        pos_genes <- net %>% filter(tf == !!tf_name, Cor > 0) %>%
+          pull(gene) %>% unique() %>% intersect(genes_in_mat)
+        neg_genes <- net %>% filter(tf == !!tf_name, Cor < 0) %>%
+          pull(gene) %>% unique() %>% intersect(genes_in_mat)
         data.frame(
           tf       = tf_name,
           cluster  = clusters,
@@ -629,24 +655,26 @@ atlas_server <- function(seurat_obj, metadata_choices) {
           stringsAsFactors = FALSE
         )
       })
-
+      
       df_wide <- bind_rows(rows) %>% group_by(tf) %>%
         mutate(tf_expr_scaled = { rng <- range(tf_expr, na.rm = TRUE);
-          if (diff(rng) == 0) rep(0.5, n()) else (tf_expr - rng[1]) / diff(rng) }) %>% ungroup()
-
+        if (diff(rng) == 0) rep(0.5, n()) else (tf_expr - rng[1]) / diff(rng) }) %>%
+        ungroup()
+      
       df_long <- df_wide %>%
-        pivot_longer(cols = c(pos_reg, neg_reg), names_to = "regulon_dir", values_to = "mean_expr") %>%
+        pivot_longer(cols = c(pos_reg, neg_reg),
+                     names_to = "regulon_dir", values_to = "mean_expr") %>%
         mutate(regulon_dir = dplyr::case_when(
-                 regulon_dir == "pos_reg" ~ "Positive regulon  (Cor > 0)",
-                 regulon_dir == "neg_reg" ~ "Negative regulon  (Cor < 0)"),
-               regulon_dir = factor(regulon_dir,
-                 levels = c("Positive regulon  (Cor > 0)", "Negative regulon  (Cor < 0)")))
-
+          regulon_dir == "pos_reg" ~ "Positive regulon  (Cor > 0)",
+          regulon_dir == "neg_reg" ~ "Negative regulon  (Cor < 0)"),
+          regulon_dir = factor(regulon_dir,
+                               levels = c("Positive regulon  (Cor > 0)", "Negative regulon  (Cor < 0)")))
+      
       incProgress(1, detail = "Done.")
       list(df_long = df_long, df_wide = df_wide, tfs_use = tfs_use,
            clusters = clusters, module = input$reg_selected_module, net = net)
-    }
-  }
+    })  # close withProgress
+  })    # close eventReactive
 
   output$reg_enrich_tf_selector <- renderUI({
     if (isTruthy(reg_heatmap_data())) {
@@ -850,5 +878,6 @@ atlas_server <- function(seurat_obj, metadata_choices) {
     content  = function(file) write.csv(reg_enrich_results()$neg, file, row.names = FALSE))
 
 
-  } # end server function
+  }# end server function
+}
 
