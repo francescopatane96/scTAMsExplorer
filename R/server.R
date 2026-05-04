@@ -44,6 +44,7 @@
 #' @importFrom Seurat DimPlot FeaturePlot VlnPlot DotPlot DoHeatmap
 #' @importFrom Seurat FindMarkers AverageExpression
 #' @importFrom Seurat Idents DefaultAssay
+#' @importFrom Seurat AggregateExpression
 #' @importFrom SeuratObject Idents<-
 #' @importFrom tibble rownames_to_column
 #' @importFrom plotly ggplotly renderPlotly
