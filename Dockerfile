@@ -48,6 +48,9 @@ RUN R -e "remotes::install_version('Seurat', version = '5.1.0', \
 # ------------------------------------------------------------
 # GitHub installs — use PAT to avoid rate limit
 # ------------------------------------------------------------
+
+RUN echo "devtools::install_github('immunogenomics/presto')"
+
 ARG GITHUB_PAT
 ENV GITHUB_PAT=${GITHUB_PAT}
 
