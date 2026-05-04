@@ -16,8 +16,6 @@ if (!file.exists(qs_path)) {
        call. = FALSE)
 }
 library(qs)
-library(enrichR)
-#library(scTAMsExplorer)
 
 cat("Loading Seurat object...\n")
 seurat_obj <- qread(qs_path, nthreads=1)
