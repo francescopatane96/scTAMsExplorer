@@ -51,7 +51,7 @@ RUN R -e "remotes::install_version('RcppArmadillo', version = '0.12.8.4.0', repo
 # GitHub installs — use PAT to avoid rate limit
 # ------------------------------------------------------------
 
-RUN echo "devtools::install_github('immunogenomics/presto')"
+RUN R -e "devtools::install_github('immunogenomics/presto')"
 
 ARG GITHUB_PAT
 ENV GITHUB_PAT=${GITHUB_PAT}
