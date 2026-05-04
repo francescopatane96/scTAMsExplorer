@@ -45,7 +45,7 @@ RUN install2.r --error --skipinstalled -n 10 \
 #RUN R -e "remotes::install_version('Seurat', version = '5.1.0', \
           #repos = 'https://cloud.r-project.org', upgrade = 'never')"
 
-RUN R -e "remotes::install_version('RcppArmadillo', version = '0.12.8.4.0', repos = 'https://cloud.r-project.org')"
+#RUN R -e "remotes::install_version('RcppArmadillo', version = '0.12.8.4.0', repos = 'https://cloud.r-project.org')"
 
 # ------------------------------------------------------------
 # GitHub installs — use PAT to avoid rate limit
