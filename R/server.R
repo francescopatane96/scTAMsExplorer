@@ -699,7 +699,8 @@ atlas_server <- function(seurat_obj, metadata_choices) {
   
   am <- AverageExpression(
     seurat_obj,
-    group.by = "Population_level3"
+    group.by = "Population_level3",
+    layer = "data"
   )[[1]]
   
   as.matrix(am)
