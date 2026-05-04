@@ -3,6 +3,7 @@ FROM rocker/r-ver:4.4.1
 ARG P3MVER='jammy/2024-09-11'
 # Add P3MVER as default repository for CRAN in .Rprofile
 RUN touch /root/.Rprofile \
+    && echo "options(timeout = 600)" >> /root/.Rprofile \
     && echo "options(repos=c(CRAN='"https://p3m.dev/cran/__linux__/${P3MVER}"'))" >> /root/.Rprofile
     
 ARG BIOCONDUCTORVER='3.19'
