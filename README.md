@@ -65,7 +65,6 @@ library(tibble)
 library(tidyr)
 library(plotly)
 library(DT)
-library(enrichR)
 library(patchwork)
 library(scales)
 library(stringr)
@@ -99,9 +98,9 @@ That's it. The app opens in your browser and all analyses run on your object.
 ```r
 launch_explorer(
   seurat_obj,            # Your Seurat object (required)
-  port           = NULL, # Fixed port, e.g. 4242 (optional)
-  launch.browser = TRUE, # Open browser automatically?
-  host           = "127.0.0.1", # "0.0.0.0" to expose on LAN
+  port           = 3838, # Fixed port, e.g. 4242 (optional)
+  launch.browser = FALSE, # Open browser automatically?
+  host           = "0.0.0.0", # "0.0.0.0" to expose on LAN
   ...                    # Passed to shiny::runApp()
 )
 ```
@@ -113,7 +112,7 @@ launch_explorer(
 | `seurat_obj` | Seurat | — | **Required.** Your processed Seurat atlas object. |
 | `port` | integer | `NULL` | Fixed port number. Leave `NULL` for automatic selection. |
 | `launch.browser` | logical | `TRUE` | Open the app in the default browser? |
-| `host` | character | `"127.0.0.1"` | Set to `"0.0.0.0"` to make accessible on your local network (e.g., from another machine). |
+| `host` | character | `"0.0.0.0"` | Set to `"0.0.0.0"` to make accessible on your local network (e.g., from another machine). |
 | `...` | — | — | Additional arguments forwarded to `shiny::runApp()`. |
 
 #### Examples
@@ -123,7 +122,7 @@ launch_explorer(
 launch_explorer(seurat_obj)
 
 # Fixed port, no browser (e.g. running on a remote server)
-launch_explorer(seurat_obj, port = 8080, launch.browser = FALSE)
+launch_explorer(seurat_obj, port = 3838, launch.browser = FALSE)
 
 # Expose on local network (accessible from other devices)
 launch_explorer(seurat_obj, host = "0.0.0.0", port = 3838)
