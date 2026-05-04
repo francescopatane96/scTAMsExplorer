@@ -33,17 +33,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN install2.r --error --skipinstalled -n 10 \
     shiny dplyr tibble tidyr plotly DT qs \
     enrichR scales stringr ggrepel visNetwork \
-    remotes BiocManager devtools R.utils ggplot2 patchwork \
+    remotes BiocManager devtools R.utils ggplot2 patchwork SeuratObject Seurat\
     && strip /usr/local/lib/R/site-library/*/libs/*.so \
     && rm -rf /tmp/downloaded_packages
 
 # Seurat — separate layer for cache
-RUN R -e "remotes::install_version('SeuratObject', version = '5.0.2', \
-          repos = 'https://cloud.r-project.org', upgrade = 'never')"
+#RUN R -e "remotes::install_version('SeuratObject', version = '5.0.2', \
+          #repos = 'https://cloud.r-project.org', upgrade = 'never')"
 
 # Seurat 5.1.0
-RUN R -e "remotes::install_version('Seurat', version = '5.1.0', \
-          repos = 'https://cloud.r-project.org', upgrade = 'never')"
+#RUN R -e "remotes::install_version('Seurat', version = '5.1.0', \
+          #repos = 'https://cloud.r-project.org', upgrade = 'never')"
 
 RUN R -e "remotes::install_version('RcppArmadillo', version = '0.12.8.4.0', repos = 'https://cloud.r-project.org')"
 
