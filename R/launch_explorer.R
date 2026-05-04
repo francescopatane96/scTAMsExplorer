@@ -53,9 +53,9 @@
 #'
 #' @export
 launch_explorer <- function(seurat_obj,
-                            port           = NULL,
-                            launch.browser = TRUE,
-                            host           = "127.0.0.1",
+                            port           = 3838,
+                            launch.browser = FALSE,
+                            host           = "0.0.0.0",
                             ...) {
 
   # ---- Input validation ----------------------------------
