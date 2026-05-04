@@ -693,16 +693,19 @@ atlas_server <- function(seurat_obj, metadata_choices) {
   # the means statistically stable while cutting memory by an order
   # of magnitude. Cached as a reactive so it runs once per session.
   # ----------------------------------------------------------------
-  avg_expr_cached <- reactive({
+avg_expr_cached <- reactive({
   validate(need("Population_level3" %in% colnames(seurat_obj@meta.data),
                 "Metadata column 'Population_level3' not found in the Seurat object."))
   
-am <- AggregateExpression(
-  seurat_obj,
-  assays   = "RNA",
-  group.by = "Population_level3",
-  return.seurat = FALSE
-)[[1]]
+  am <- AggregateExpression(
+    seurat_obj,
+    assays   = "RNA",
+    group.by = "Population_level3",
+    return.seurat = FALSE
+  )[[1]]
+  
+  as.matrix(am)
+}) # here
 
 reg_heatmap_data <- eventReactive(input$run_reg_heatmap, {
   withProgress(message = "Building TF regulon heatmap...", value = 0, {
