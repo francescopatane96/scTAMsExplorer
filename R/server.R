@@ -67,6 +67,7 @@ atlas_server <- function(seurat_obj, metadata_choices) {
     # TAB 1
     # ================================================
     library(patchwork)
+    library(enrichR)
     
     # -----------------------------
     # Gene trigger (NUOVO)
