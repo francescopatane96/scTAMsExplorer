@@ -21,7 +21,7 @@ Depends:
     shiny (>= 1.7.0),
     DT (>= 0.33)  
 Imports:
-    RcppArmadillo (< 0.15),
+    RcppArmadillo (< 0.14),
     Seurat (>= 5.1.0),
     SeuratObject (>= 5.0.2),
     igraph,
