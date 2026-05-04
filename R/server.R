@@ -697,14 +697,12 @@ atlas_server <- function(seurat_obj, metadata_choices) {
   validate(need("Population_level3" %in% colnames(seurat_obj@meta.data),
                 "Metadata column 'Population_level3' not found in the Seurat object."))
   
-  am <- AverageExpression(
-    seurat_obj,
-    group.by = "Population_level3",
-    layer = "data"
-  )[[1]]
-  
-  as.matrix(am)
-})
+am <- AggregateExpression(
+  seurat_obj,
+  assays   = "RNA",
+  group.by = "Population_level3",
+  return.seurat = FALSE
+)[[1]]
 
 reg_heatmap_data <- eventReactive(input$run_reg_heatmap, {
   withProgress(message = "Building TF regulon heatmap...", value = 0, {
