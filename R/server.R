@@ -694,184 +694,176 @@ atlas_server <- function(seurat_obj, metadata_choices) {
   # of magnitude. Cached as a reactive so it runs once per session.
   # ----------------------------------------------------------------
   avg_expr_cached <- reactive({
-    validate(need("Population_level3" %in% colnames(seurat_obj@meta.data),
-                  "Metadata column 'Population_level3' not found in the Seurat object."))
-    
-    cells_keep <- unlist(lapply(
-      unique(seurat_obj$Population_level3),
-      function(cl) {
-        cells <- colnames(seurat_obj)[seurat_obj$Population_level3 == cl]
-        if (length(cells) > 5000) sample(cells, 5000) else cells
-      }
-    ))
-    
-    am <- AverageExpression(
-      subset(seurat_obj, cells = cells_keep),
-      group.by = "Population_level3"
-    )$RNA
-    
-    as.matrix(am)
-  })
+  validate(need("Population_level3" %in% colnames(seurat_obj@meta.data),
+                "Metadata column 'Population_level3' not found in the Seurat object."))
   
-  reg_heatmap_data <- eventReactive(input$run_reg_heatmap, {
-    withProgress(message = "Building TF regulon heatmap...", value = 0, {
-      
-      incProgress(0.05, detail = "Loading TF network...")
-      net <- GetTFNetwork(seurat_obj) %>% filter(Gain >= input$reg_min_gain)
-      validate(need(nrow(net) > 0, "No edges after Gain filter."))
-      
-      incProgress(0.15, detail = "Average expression per cluster...")
-      avg_mat      <- avg_expr_cached()
-      clusters     <- colnames(avg_mat)
-      genes_in_mat <- rownames(avg_mat)
-      
-      incProgress(0.30, detail = "Filtering TFs...")
-      module_tfs <- character(0)
-      if (!is.null(input$reg_selected_module) && input$reg_selected_module != "All modules") {
-        tryCatch({
-          module_tfs <- GetModules(seurat_obj) %>%
-            filter(module == input$reg_selected_module) %>% pull(gene_name) %>% unique()
-        }, error = function(e) {})
-      }
-      manual_tfs <- if (nchar(trimws(input$reg_tf_filter)) > 0)
-        strsplit(input$reg_tf_filter, ",\\s*")[[1]] %>% trimws() else character(0)
-      
-      all_tfs <- unique(net$tf)
-      if (length(module_tfs) > 0) {
-        all_tfs <- intersect(all_tfs, module_tfs)
-        validate(need(length(all_tfs) > 0,
-                      paste0("No TFs from module '", input$reg_selected_module, "'.")))
-      }
-      tfs_valid <- all_tfs[all_tfs %in% genes_in_mat]
-      min_sz    <- input$reg_min_regulon_size
-      tfs_valid <- tfs_valid[vapply(tfs_valid, function(tf_name) {
-        pos_n <- sum(net$tf == tf_name & net$Cor > 0 & net$gene %in% genes_in_mat)
-        neg_n <- sum(net$tf == tf_name & net$Cor < 0 & net$gene %in% genes_in_mat)
-        max(pos_n, neg_n) >= min_sz
-      }, logical(1))]
-      validate(need(length(tfs_valid) > 0, "No TFs pass filters."))
-      
-      if (length(manual_tfs) > 0) {
-        tfs_use <- intersect(manual_tfs, tfs_valid)
-        validate(need(length(tfs_use) > 0, "Specified TFs not in filtered network."))
-      } else {
-        reg_sizes <- vapply(tfs_valid, function(tf_name) sum(net$tf == tf_name), integer(1))
-        tfs_use   <- tfs_valid[order(reg_sizes, decreasing = TRUE)][
-          seq_len(min(input$reg_top_n_tfs, length(tfs_valid)))]
-      }
-      
-      incProgress(0.50, detail = "Building expression matrix...")
-      
-      safe_regulon_mean <- function(genes) {
-        if (length(genes) == 0) return(rep(NA_real_, length(clusters)))
-        if (length(genes) == 1) return(as.numeric(avg_mat[genes, ]))
-        as.numeric(colMeans(avg_mat[genes, , drop = FALSE], na.rm = TRUE))
-      }
-      
-      rows <- lapply(tfs_use, function(tf_name) {
-        pos_genes <- net %>% filter(tf == !!tf_name, Cor > 0) %>%
-          pull(gene) %>% unique() %>% intersect(genes_in_mat)
-        neg_genes <- net %>% filter(tf == !!tf_name, Cor < 0) %>%
-          pull(gene) %>% unique() %>% intersect(genes_in_mat)
-        data.frame(
-          tf       = tf_name,
-          cluster  = clusters,
-          tf_expr  = as.numeric(avg_mat[tf_name, ]),
-          pos_reg  = safe_regulon_mean(pos_genes),
-          neg_reg  = safe_regulon_mean(neg_genes),
-          n_pos    = length(pos_genes),
-          n_neg    = length(neg_genes),
-          stringsAsFactors = FALSE
-        )
-      })
-      
-      df_wide <- bind_rows(rows) %>% group_by(tf) %>%
-        mutate(tf_expr_scaled = { rng <- range(tf_expr, na.rm = TRUE);
-        if (diff(rng) == 0) rep(0.5, n()) else (tf_expr - rng[1]) / diff(rng) }) %>%
-        ungroup()
-      
-      df_long <- df_wide %>%
-        pivot_longer(cols = c(pos_reg, neg_reg),
-                     names_to = "regulon_dir", values_to = "mean_expr") %>%
-        mutate(regulon_dir = dplyr::case_when(
-          regulon_dir == "pos_reg" ~ "Positive regulon  (Cor > 0)",
-          regulon_dir == "neg_reg" ~ "Negative regulon  (Cor < 0)"),
-          regulon_dir = factor(regulon_dir,
-                               levels = c("Positive regulon  (Cor > 0)", "Negative regulon  (Cor < 0)")))
-      
-      incProgress(1, detail = "Done.")
-      list(df_long = df_long, df_wide = df_wide, tfs_use = tfs_use,
-           clusters = clusters, module = input$reg_selected_module, net = net)
-    })  # close withProgress
-  })    # close eventReactive
+  am <- AverageExpression(
+    seurat_obj,
+    group.by = "Population_level3"
+  )[[1]]
+  
+  as.matrix(am)
+})
 
-  output$reg_enrich_tf_selector <- renderUI({
-    if (isTruthy(reg_heatmap_data())) {
-      tfs <- reg_heatmap_data()$tfs_use
-      if (length(tfs) > 0)
-        selectInput("reg_enrich_tf", "TF for enrichment:", choices = tfs, selected = tfs[1])
-      else helpText("Build the heatmap first.")
-    } else helpText("Build the heatmap first.")
-  })
-
-  output$reg_status <- renderText({
-    if (!isTruthy(reg_heatmap_data())) return("")
-    d  <- reg_heatmap_data()
-    mt <- if (!is.null(d$module) && d$module != "All modules") paste0("  |  Module: ", d$module) else ""
-    paste0("Loaded: ", length(d$tfs_use), " TFs  ×  ", length(d$clusters), " clusters", mt)
-  })
-
-  reg_heatmap_plot_obj <- reactive({
-    req(reg_heatmap_data())
-    df   <- reg_heatmap_data()$df_long
-    dmin <- input$reg_dot_range[1]; dmax <- input$reg_dot_range[2]; pt <- input$reg_pt
-
-    tf_order <- df %>%
-      filter(regulon_dir == "Positive regulon  (Cor > 0)") %>%
-      group_by(tf) %>% summarise(total_pos = sum(mean_expr, na.rm = TRUE), .groups = "drop") %>%
-      arrange(desc(total_pos)) %>% pull(tf)
-    df <- df %>% mutate(tf = factor(tf, levels = rev(tf_order)))
-
-    dot_theme <- theme_minimal(base_size = pt) +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1, size = pt - 1),
-            axis.text.y = element_text(size = pt - 1),
-            panel.grid.major = element_line(color = "grey92"),
-            legend.position = "right",
-            plot.title = element_text(face = "bold", size = pt + 1),
-            legend.key.size = unit(0.45, "cm"))
-
-    make_dot <- function(data, fill_high, fill_name, title_txt) {
-      ggplot(data, aes(x = cluster, y = tf, size = tf_expr_scaled, fill = mean_expr)) +
-        geom_point(shape = 21, color = "grey30", stroke = 0.3, alpha = 0.9) +
-        scale_size_continuous(range = c(dmin, dmax), name = "TF expr\n(scaled 0–1)") +
-        scale_fill_gradient(low = "white", high = fill_high, na.value = "grey85", name = fill_name) +
-        labs(title = title_txt, x = NULL, y = "Transcription Factor") + dot_theme
+reg_heatmap_data <- eventReactive(input$run_reg_heatmap, {
+  withProgress(message = "Building TF regulon heatmap...", value = 0, {
+    
+    incProgress(0.05, detail = "Loading TF network...")
+    net <- GetTFNetwork(seurat_obj) %>% filter(Gain >= input$reg_min_gain)
+    validate(need(nrow(net) > 0, "No edges after Gain filter."))
+    
+    incProgress(0.15, detail = "Average expression per cluster...")
+    avg_mat      <- avg_expr_cached()
+    clusters     <- colnames(avg_mat)
+    genes_in_mat <- rownames(avg_mat)
+    
+    incProgress(0.30, detail = "Filtering TFs...")
+    module_tfs <- character(0)
+    if (!is.null(input$reg_selected_module) && input$reg_selected_module != "All modules") {
+      tryCatch({
+        module_tfs <- GetModules(seurat_obj) %>%
+          filter(module == input$reg_selected_module) %>% pull(gene_name) %>% unique()
+      }, error = function(e) {})
     }
+    manual_tfs <- if (nchar(trimws(input$reg_tf_filter)) > 0)
+      strsplit(input$reg_tf_filter, ",\\s*")[[1]] %>% trimws() else character(0)
+    
+    all_tfs <- unique(net$tf)
+    if (length(module_tfs) > 0) {
+      all_tfs <- intersect(all_tfs, module_tfs)
+      validate(need(length(all_tfs) > 0,
+                    paste0("No TFs from module '", input$reg_selected_module, "'.")))
+    }
+    tfs_valid <- all_tfs[all_tfs %in% genes_in_mat]
+    min_sz    <- input$reg_min_regulon_size
+    tfs_valid <- tfs_valid[vapply(tfs_valid, function(tf_name) {
+      pos_n <- sum(net$tf == tf_name & net$Cor > 0 & net$gene %in% genes_in_mat)
+      neg_n <- sum(net$tf == tf_name & net$Cor < 0 & net$gene %in% genes_in_mat)
+      max(pos_n, neg_n) >= min_sz
+    }, logical(1))]
+    validate(need(length(tfs_valid) > 0, "No TFs pass filters."))
+    
+    if (length(manual_tfs) > 0) {
+      tfs_use <- intersect(manual_tfs, tfs_valid)
+      validate(need(length(tfs_use) > 0, "Specified TFs not in filtered network."))
+    } else {
+      reg_sizes <- vapply(tfs_valid, function(tf_name) sum(net$tf == tf_name), integer(1))
+      tfs_use   <- tfs_valid[order(reg_sizes, decreasing = TRUE)][
+        seq_len(min(input$reg_top_n_tfs, length(tfs_valid)))]
+    }
+    
+    incProgress(0.50, detail = "Building expression matrix...")
+    
+    safe_regulon_mean <- function(genes) {
+      if (length(genes) == 0) return(rep(NA_real_, length(clusters)))
+      if (length(genes) == 1) return(as.numeric(avg_mat[genes, ]))
+      as.numeric(colMeans(avg_mat[genes, , drop = FALSE], na.rm = TRUE))
+    }
+    
+    rows <- lapply(tfs_use, function(tf_name) {
+      pos_genes <- net %>% filter(tf == !!tf_name, Cor > 0) %>%
+        pull(gene) %>% unique() %>% intersect(genes_in_mat)
+      neg_genes <- net %>% filter(tf == !!tf_name, Cor < 0) %>%
+        pull(gene) %>% unique() %>% intersect(genes_in_mat)
+      data.frame(
+        tf       = tf_name,
+        cluster  = clusters,
+        tf_expr  = as.numeric(avg_mat[tf_name, ]),
+        pos_reg  = safe_regulon_mean(pos_genes),
+        neg_reg  = safe_regulon_mean(neg_genes),
+        n_pos    = length(pos_genes),
+        n_neg    = length(neg_genes),
+        stringsAsFactors = FALSE
+      )
+    })
+    
+    df_wide <- bind_rows(rows) %>% group_by(tf) %>%
+      mutate(tf_expr_scaled = { rng <- range(tf_expr, na.rm = TRUE);
+      if (diff(rng) == 0) rep(0.5, n()) else (tf_expr - rng[1]) / diff(rng) }) %>%
+      ungroup()
+    
+    df_long <- df_wide %>%
+      pivot_longer(cols = c(pos_reg, neg_reg),
+                   names_to = "regulon_dir", values_to = "mean_expr") %>%
+      mutate(regulon_dir = dplyr::case_when(
+        regulon_dir == "pos_reg" ~ "Positive regulon  (Cor > 0)",
+        regulon_dir == "neg_reg" ~ "Negative regulon  (Cor < 0)"),
+        regulon_dir = factor(regulon_dir,
+                             levels = c("Positive regulon  (Cor > 0)", "Negative regulon  (Cor < 0)")))
+    
+    incProgress(1, detail = "Done.")
+    list(df_long = df_long, df_wide = df_wide, tfs_use = tfs_use,
+         clusters = clusters, module = input$reg_selected_module, net = net)
+  })  # close withProgress
+})    # close eventReactive
 
-    p_pos <- make_dot(df %>% filter(regulon_dir == "Positive regulon  (Cor > 0)"),
-                      "firebrick", "Mean expr\npos. regulon", "Positive regulon  (Cor > 0)")
-    p_neg <- make_dot(df %>% filter(regulon_dir == "Negative regulon  (Cor < 0)"),
-                      "steelblue4", "Mean expr\nneg. regulon", "Negative regulon  (Cor < 0)") +
-      labs(x = "Cluster")
+output$reg_enrich_tf_selector <- renderUI({
+  if (isTruthy(reg_heatmap_data())) {
+    tfs <- reg_heatmap_data()$tfs_use
+    if (length(tfs) > 0)
+      selectInput("reg_enrich_tf", "TF for enrichment:", choices = tfs, selected = tfs[1])
+    else helpText("Build the heatmap first.")
+  } else helpText("Build the heatmap first.")
+})
 
-    title_suffix <- if (!is.null(reg_heatmap_data()$module) &&
-                        reg_heatmap_data()$module != "All modules")
-      paste0("  |  Module: ", reg_heatmap_data()$module) else ""
+output$reg_status <- renderText({
+  if (!isTruthy(reg_heatmap_data())) return("")
+  d  <- reg_heatmap_data()
+  mt <- if (!is.null(d$module) && d$module != "All modules") paste0("  |  Module: ", d$module) else ""
+  paste0("Loaded: ", length(d$tfs_use), " TFs  ×  ", length(d$clusters), " clusters", mt)
+})
 
-    p_pos / p_neg +
-      plot_annotation(
-        title = paste0("TF Regulon Heatmap", title_suffix,
-                       "  |  dot size = TF expr (scaled)  |  dot color = mean regulon expr"),
-        theme = theme(plot.title = element_text(size = pt, color = "grey40", hjust = 0.5)))
-  })
+reg_heatmap_plot_obj <- reactive({
+  req(reg_heatmap_data())
+  df   <- reg_heatmap_data()$df_long
+  dmin <- input$reg_dot_range[1]; dmax <- input$reg_dot_range[2]; pt <- input$reg_pt
 
-  output$reg_heatmap_container <- renderUI({
-    req(input$reg_width, input$reg_height)
-    plotOutput("reg_heatmap_plot",
-               width  = paste0(input$reg_width,  "px"),
-               height = paste0(input$reg_height, "px"))
-  })
-  output$reg_heatmap_plot  <- renderPlot({ req(reg_heatmap_plot_obj()); reg_heatmap_plot_obj() })
+  tf_order <- df %>%
+    filter(regulon_dir == "Positive regulon  (Cor > 0)") %>%
+    group_by(tf) %>% summarise(total_pos = sum(mean_expr, na.rm = TRUE), .groups = "drop") %>%
+    arrange(desc(total_pos)) %>% pull(tf)
+  df <- df %>% mutate(tf = factor(tf, levels = rev(tf_order)))
+
+  dot_theme <- theme_minimal(base_size = pt) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1, size = pt - 1),
+          axis.text.y = element_text(size = pt - 1),
+          panel.grid.major = element_line(color = "grey92"),
+          legend.position = "right",
+          plot.title = element_text(face = "bold", size = pt + 1),
+          legend.key.size = unit(0.45, "cm"))
+
+  make_dot <- function(data, fill_high, fill_name, title_txt) {
+    ggplot(data, aes(x = cluster, y = tf, size = tf_expr_scaled, fill = mean_expr)) +
+      geom_point(shape = 21, color = "grey30", stroke = 0.3, alpha = 0.9) +
+      scale_size_continuous(range = c(dmin, dmax), name = "TF expr\n(scaled 0–1)") +
+      scale_fill_gradient(low = "white", high = fill_high, na.value = "grey85", name = fill_name) +
+      labs(title = title_txt, x = NULL, y = "Transcription Factor") + dot_theme
+  }
+
+  p_pos <- make_dot(df %>% filter(regulon_dir == "Positive regulon  (Cor > 0)"),
+                    "firebrick", "Mean expr\npos. regulon", "Positive regulon  (Cor > 0)")
+  p_neg <- make_dot(df %>% filter(regulon_dir == "Negative regulon  (Cor < 0)"),
+                    "steelblue4", "Mean expr\nneg. regulon", "Negative regulon  (Cor < 0)") +
+    labs(x = "Cluster")
+
+  title_suffix <- if (!is.null(reg_heatmap_data()$module) &&
+                      reg_heatmap_data()$module != "All modules")
+    paste0("  |  Module: ", reg_heatmap_data()$module) else ""
+
+  p_pos / p_neg +
+    plot_annotation(
+      title = paste0("TF Regulon Heatmap", title_suffix,
+                     "  |  dot size = TF expr (scaled)  |  dot color = mean regulon expr"),
+      theme = theme(plot.title = element_text(size = pt, color = "grey40", hjust = 0.5)))
+})
+
+output$reg_heatmap_container <- renderUI({
+  req(input$reg_width, input$reg_height)
+  plotOutput("reg_heatmap_plot",
+             width  = paste0(input$reg_width,  "px"),
+             height = paste0(input$reg_height, "px"))
+})
+output$reg_heatmap_plot  <- renderPlot({ req(reg_heatmap_plot_obj()); reg_heatmap_plot_obj() })
 
   output$reg_summary_table <- DT::renderDataTable({
     req(reg_heatmap_data())
