@@ -708,7 +708,7 @@ atlas_server <- function(seurat_obj, metadata_choices) {
     am <- AverageExpression(
       subset(seurat_obj, cells = cells_keep),
       group.by = "Population_level3"
-    )[[1]]
+    )$RNA
     
     as.matrix(am)
   })
