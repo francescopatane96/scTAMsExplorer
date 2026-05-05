@@ -337,6 +337,11 @@ degs_data <- eventReactive(input$deg, {
   validate(need(input$deg_group1 != input$deg_group2,
                 "Groups must be different."))
 
+  id <- showNotification("Running DEG analysis...",
+                         duration = NULL, closeButton = FALSE,
+                         type = "message")
+  on.exit(removeNotification(id), add = TRUE)
+
   meta      <- meta_df()
   in_subset <- meta[[input$deg_subset_meta]] %in% input$deg_subset_value
 
