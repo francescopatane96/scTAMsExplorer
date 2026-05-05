@@ -318,19 +318,35 @@ atlas_server <- function(seurat_obj, metadata_choices) {
   })
 
   degs_data <- eventReactive(input$deg, {
-    req(input$deg_subset_meta, input$deg_subset_value,
-        input$deg_compare_meta, input$deg_group1, input$deg_group2)
-    validate(need(input$deg_group1 != input$deg_group2, "Groups must be different."))
-    Idents(seurat_obj) <- input$deg_subset_meta
-    sub <- subset(seurat_obj, idents = input$deg_subset_value)
-    Idents(sub) <- input$deg_compare_meta
-    FindMarkers(sub, ident.1 = input$deg_group1, ident.2 = input$deg_group2,
-                fc.slot = "counts") |>
-      rownames_to_column("gene") |>
-      mutate(direction = ifelse(avg_log2FC > 0, "UP", "DOWN"),
-             log_p     = -log10(p_val_adj + 1e-300),
-             abs_fc    = abs(avg_log2FC))
-  })
+  req(input$deg_subset_meta, input$deg_subset_value,
+      input$deg_compare_meta, input$deg_group1, input$deg_group2)
+  validate(need(input$deg_group1 != input$deg_group2, "Groups must be different."))
+
+  meta <- seurat_obj[[]]   # data.frame dei metadati
+
+  # Cellule che appartengono al subset
+  in_subset <- meta[[input$deg_subset_meta]] %in% input$deg_subset_value
+
+  # Cellule dei due gruppi da confrontare, già ristrette al subset
+  cells_g1 <- rownames(meta)[in_subset &
+                             meta[[input$deg_compare_meta]] == input$deg_group1]
+  cells_g2 <- rownames(meta)[in_subset &
+                             meta[[input$deg_compare_meta]] == input$deg_group2]
+
+  validate(
+    need(length(cells_g1) >= 3, "Group 1 has too few cells in the selected subset."),
+    need(length(cells_g2) >= 3, "Group 2 has too few cells in the selected subset.")
+  )
+
+  FindMarkers(seurat_obj,
+              ident.1  = cells_g1,
+              ident.2  = cells_g2,
+              fc.slot  = "counts") |>
+    rownames_to_column("gene") |>
+    mutate(direction = ifelse(avg_log2FC > 0, "UP", "DOWN"),
+           log_p     = -log10(p_val_adj + 1e-300),
+           abs_fc    = abs(avg_log2FC))
+})
 
   output$deg_table <- DT::renderDataTable({
     req(degs_data())
