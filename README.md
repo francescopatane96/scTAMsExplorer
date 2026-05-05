@@ -17,18 +17,18 @@
 All plots have adjustable **display size**, **download resolution (DPI + inches)**, and **font size**. All tables are sortable, filterable, and paginated via DataTables.
 
 ---
-## Installation - Docker (recommended way)
+## Installation via Docker (recommended way)
 
 ### 1 · Install Docker Desktop
 Follow the instructions for your system at https://docs.docker.com/desktop/
 
-### 2 · Verify if docker has been sucesfully installed via terminal
+### 2 · Verify if docker has been succesfully installed via terminal
 type and enter the command "docker info".
 
 ### 3 · Change the docker memory limit up to 16 GB
 Via the docker desktop app, go to Settings/Resources/Resource Allocation/Memory Limit and increase the RAM memory limit
 
-### 4 · Download the image and run the container via terminal (adapt "/path/to/your/seurat_object.rds")
+### 4 · Download the image and run the container via terminal (adapt "/path/to/your/seurat_object.qs")
 
 ```
 docker run --rm -p 3838:3838 \
@@ -39,18 +39,33 @@ wait until the seurat object has been completely loaded (the terminal should dis
 
 ### 5 · open a browser and go to http://localhost:3838 
 
-## Installation
+## Local Installation
 
-Important Note: This packages has been tested on R 4.4. on Linux systems, "libssl-dev" and "libglpk-dev" need to be installed
+Important Note: This packages has been tested on R 4.4 and therefore it is highly recommended to use this R version. 
+On Linux systems, "libssl-dev" and "libglpk-dev" need to be installed.
 
 
 ### 1 · Install required dependencies
 
 
 ```r
-install.packages(c("shiny", "ggplot2", "dplyr", "tidyr", "tibble", "plotly", "DT", "enrichR", "patchwork", "scales", "stringr", "ggrepel", "visNetwork", "remotes", "qs"))
-if (!requireNamespace("BiocManager", quietly = TRUE)) { install.packages("BiocManager") }
-BiocManager::install(c("Seurat", "GeneOverlap", "GenomicRanges", "SummarizedExperiment", "impute", "preprocessCore"))
+# CRAN packages
+install.packages(c(
+  "shiny", "ggplot2", "dplyr", "tidyr", "tibble",
+  "plotly", "DT", "enrichR", "patchwork", "scales",
+  "stringr", "ggrepel", "visNetwork", "remotes", "qs"
+))
+
+# Bioconductor
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+  install.packages("BiocManager")
+}
+BiocManager::install(c(
+  "Seurat", "GeneOverlap", "GenomicRanges",
+  "SummarizedExperiment", "impute", "preprocessCore"
+))
+
+# GitHub
 remotes::install_github("francescopatane96/scTAMsExplorer")
 ```
 
