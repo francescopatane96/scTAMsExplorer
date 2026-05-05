@@ -274,15 +274,28 @@ table.dataTable tbody tr:hover { background: var(--teal-lt) !important; }
 
 .info-hero {
   background: linear-gradient(125deg, var(--navy) 0%, #22405f 55%, #1a5c6e 100%);
-  border-radius: var(--radius); padding: 38px 44px; color: var(--white);
-  margin-bottom: 22px; position: relative; overflow: hidden;
+  border-radius: var(--radius);
+  padding: 38px 44px;
+  color: var(--white);
+  margin-bottom: 22px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
 }
 .hero-logo {
-  display: block;
-  margin: 0 auto 20px auto;
-  max-height: 130px;
+  max-height: 110px;
   width: auto;
+  flex-shrink: 0;
   filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25));
+}
+.info-hero > div,
+.info-hero > h2,
+.info-hero > p,
+.info-hero > .hero-badge {
+  /* lascia che il testo prenda lo spazio rimanente */
 }
 .info-hero::before {
   content: ''; position: absolute; top: -70px; right: -50px;
