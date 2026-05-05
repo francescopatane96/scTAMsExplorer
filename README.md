@@ -56,6 +56,8 @@ install.packages(c(
   "stringr", "ggrepel", "visNetwork", "remotes", "qs"
 ))
 
+remotes::install_github("immunogenomics/presto")
+
 # Bioconductor
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
   install.packages("BiocManager")
