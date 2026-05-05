@@ -84,14 +84,18 @@ atlas_ui <- function(metadata_choices) {
     shiny::tags$head(shiny::tags$style(shiny::HTML(app_css()))),
 
     shiny::tags$div(class = "app-header",
-      shiny::tags$span(class = "app-icon",
-                       shiny::HTML("&#129516;")),
-      shiny::tags$div(
-        shiny::tags$h1("scTAMsExplorer"),
-        shiny::tags$p(class = "app-subtitle",
-                      "Single-cell RNA-seq analysis - Interactive dashboard")
-      )
-    ),
+  shiny::tags$img(
+    src    = "www/logo.png",
+    class  = "app-logo",
+    alt    = "scTAMsExplorer logo",
+    height = "60"
+  ),
+  shiny::tags$div(
+    shiny::tags$h1("scTAMsExplorer"),
+    shiny::tags$p(class = "app-subtitle",
+                  "Single-cell RNA-seq analysis - Interactive dashboard")
+  )
+),
 
     shiny::tags$div(class = "nav-wrapper",
       shiny::tabsetPanel(id = "main_tabs",
