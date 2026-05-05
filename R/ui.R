@@ -106,15 +106,20 @@ atlas_ui <- function(metadata_choices) {
             style = "max-width:2000px;margin:0 auto;padding:22px 12px 0;",
 
             shiny::tags$div(class = "info-hero",
-              shiny::tags$span(class = "hero-badge",
-                               "Bioinformatics - scRNA-seq - Single-cell Atlas"),
-              shiny::tags$h2("Welcome to scTAMsExplorer"),
-              shiny::tags$p(
-                "A modular, interactive dashboard for exploring single-cell RNA-seq atlases.",
-                "All computations run live on the Seurat object passed to ",
-                shiny::tags$code("launch_explorer()"), "."
-              )
-            ),
+  shiny::tags$img(
+    src   = "www/logo.png",
+    class = "hero-logo",
+    alt   = "scTAMsExplorer logo"
+  ),
+  shiny::tags$span(class = "hero-badge",
+                   "Bioinformatics - scRNA-seq - Single-cell Atlas"),
+  shiny::tags$h2("Welcome to scTAMsExplorer"),
+  shiny::tags$p(
+    "A modular, interactive dashboard for exploring single-cell RNA-seq atlases.",
+    "All computations run live on the Seurat object passed to ",
+    shiny::tags$code("launch_explorer()"), "."
+  )
+),
 
             shiny::tags$div(class = "info-tip",
               shiny::tags$strong("How to use: "),
