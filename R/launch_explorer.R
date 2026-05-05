@@ -78,6 +78,11 @@ launch_explorer <- function(seurat_obj,
   ui     <- atlas_ui(mc)
   server <- atlas_server(seurat_obj, mc)
 
+  shiny::addResourcePath(
+  "www",
+  system.file("app/www", package = "scTAMsExplorer")
+)
+  
   opts <- list(launch.browser = launch.browser, host = host)
   if (!is.null(port)) opts$port <- as.integer(port)
 
