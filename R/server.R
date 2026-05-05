@@ -210,7 +210,7 @@ atlas_server <- function(seurat_obj, metadata_choices) {
           reduction = "umap.harmony",
           pt.size = 0.2,
           blend = blend,
-          combine = FALSE   # 🔥 chiave
+          combine = FALSE   
         )
         
         if (do_split) {
@@ -219,7 +219,6 @@ atlas_server <- function(seurat_obj, metadata_choices) {
         
         plist <- do.call(FeaturePlot, args)
         
-        # 🔥 SE È LISTA → COMBINA TU
         if (is.list(plist)) {
           patchwork::wrap_plots(plist)
         } else {
@@ -291,57 +290,72 @@ atlas_server <- function(seurat_obj, metadata_choices) {
   # TAB 2
   # ================================================
 
-  output$deg_subset_value_selector <- renderUI({
-    req(input$deg_subset_meta)
-    choices <- sort(unique(as.character(seurat_obj@meta.data[[input$deg_subset_meta]])))
-    selectInput("deg_subset_value", paste0("Subset to (", input$deg_subset_meta, "):"),
-                choices = choices, selected = choices[1])
-  })
+  # ---- Cache dei metadati (un'unica copia, riusata da tutti i reactive) -------
+meta_df <- reactive({
+  seurat_obj[[]]
+})
 
-  deg_available_groups <- reactive({
-    req(input$deg_subset_meta, input$deg_subset_value, input$deg_compare_meta)
-    Idents(seurat_obj) <- input$deg_subset_meta
-    sub <- subset(seurat_obj, idents = input$deg_subset_value)
-    sort(unique(as.character(sub@meta.data[[input$deg_compare_meta]])))
-  })
+# ---- Selettore: valore del subset ------------------------------------------
+output$deg_subset_value_selector <- renderUI({
+  req(input$deg_subset_meta)
+  meta    <- meta_df()
+  choices <- sort(unique(as.character(meta[[input$deg_subset_meta]])))
+  selectInput("deg_subset_value",
+              paste0("Subset to (", input$deg_subset_meta, "):"),
+              choices = choices, selected = choices[1])
+})
 
-  output$deg_group1_selector <- renderUI({
-    req(deg_available_groups())
-    groups <- deg_available_groups()
-    selectInput("deg_group1", "Group 1 (ident.1):", choices = groups, selected = groups[1])
-  })
-  output$deg_group2_selector <- renderUI({
-    req(deg_available_groups(), input$deg_group1)
-    groups  <- deg_available_groups()
-    default <- if (length(groups) >= 2) groups[groups != input$deg_group1][1] else groups[1]
-    selectInput("deg_group2", "Group 2 (ident.2):", choices = groups, selected = default)
-  })
+# ---- Gruppi disponibili nel subset (per i selettori group1 / group2) -------
+deg_available_groups <- reactive({
+  req(input$deg_subset_meta, input$deg_subset_value, input$deg_compare_meta)
+  meta      <- meta_df()
+  in_subset <- meta[[input$deg_subset_meta]] %in% input$deg_subset_value
+  sort(unique(as.character(meta[[input$deg_compare_meta]][in_subset])))
+})
 
-  degs_data <- eventReactive(input$deg, {
+# ---- Selettore Group 1 -----------------------------------------------------
+output$deg_group1_selector <- renderUI({
+  req(deg_available_groups())
+  groups <- deg_available_groups()
+  selectInput("deg_group1", "Group 1 (ident.1):",
+              choices = groups, selected = groups[1])
+})
+
+# ---- Selettore Group 2 -----------------------------------------------------
+output$deg_group2_selector <- renderUI({
+  req(deg_available_groups(), input$deg_group1)
+  groups  <- deg_available_groups()
+  default <- if (length(groups) >= 2) groups[groups != input$deg_group1][1] else groups[1]
+  selectInput("deg_group2", "Group 2 (ident.2):",
+              choices = groups, selected = default)
+})
+
+# ---- Calcolo DEG -----------------------------------------------------------
+degs_data <- eventReactive(input$deg, {
   req(input$deg_subset_meta, input$deg_subset_value,
       input$deg_compare_meta, input$deg_group1, input$deg_group2)
-  validate(need(input$deg_group1 != input$deg_group2, "Groups must be different."))
+  validate(need(input$deg_group1 != input$deg_group2,
+                "Groups must be different."))
 
-  meta <- seurat_obj[[]]   # data.frame dei metadati
-
-  # Cellule che appartengono al subset
+  meta      <- meta_df()
   in_subset <- meta[[input$deg_subset_meta]] %in% input$deg_subset_value
 
-  # Cellule dei due gruppi da confrontare, già ristrette al subset
   cells_g1 <- rownames(meta)[in_subset &
                              meta[[input$deg_compare_meta]] == input$deg_group1]
   cells_g2 <- rownames(meta)[in_subset &
                              meta[[input$deg_compare_meta]] == input$deg_group2]
 
   validate(
-    need(length(cells_g1) >= 3, "Group 1 has too few cells in the selected subset."),
-    need(length(cells_g2) >= 3, "Group 2 has too few cells in the selected subset.")
+    need(length(cells_g1) >= 3,
+         "Group 1 has too few cells in the selected subset."),
+    need(length(cells_g2) >= 3,
+         "Group 2 has too few cells in the selected subset.")
   )
 
   FindMarkers(seurat_obj,
-              ident.1  = cells_g1,
-              ident.2  = cells_g2,
-              fc.slot  = "counts") |>
+              ident.1 = cells_g1,
+              ident.2 = cells_g2,
+              fc.slot = "counts") |>
     rownames_to_column("gene") |>
     mutate(direction = ifelse(avg_log2FC > 0, "UP", "DOWN"),
            log_p     = -log10(p_val_adj + 1e-300),
