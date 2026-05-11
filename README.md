@@ -58,15 +58,6 @@ install.packages(c(
 
 remotes::install_github("immunogenomics/presto")
 
-# Bioconductor
-if (!requireNamespace("BiocManager", quietly = TRUE)) {
-  install.packages("BiocManager")
-}
-BiocManager::install(c(
-  "Seurat", "GeneOverlap", "GenomicRanges",
-  "SummarizedExperiment", "impute", "preprocessCore"
-))
-
 # GitHub
 remotes::install_github("francescopatane96/scTAMsExplorer")
 ```
