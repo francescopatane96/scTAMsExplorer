@@ -387,7 +387,7 @@ degs_data <- eventReactive(input$deg, {
     df        <- degs_data() |> filter(p_val_adj < input$pval_cut, abs_fc >= input$lfc_cut)
     top_label <- df %>% arrange(desc(abs_fc)) %>% head(input$n_label)
     pt        <- input$volcano_pt
-    renderUI({ggplot(df, aes(x = avg_log2FC, y = log_p, color = direction,
+    ggplot(df, aes(x = avg_log2FC, y = log_p, color = direction,
                    text = paste0("Gene: ", gene,
                                  "<br>log2FC: ", round(avg_log2FC, 3),
                                  "<br>p.adj: ",  signif(p_val_adj, 3)))) +
@@ -404,7 +404,6 @@ degs_data <- eventReactive(input$deg, {
       theme_minimal(base_size = pt) +
       theme(legend.position = "top",
             plot.title = element_text(face = "bold", size = pt + 1))
-    })
  })
 
   output$volcano_container <- renderUI({
