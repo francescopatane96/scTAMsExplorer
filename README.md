@@ -1,6 +1,6 @@
 # 🧬 scTAMsExplorer
 
-> An interactive Shiny dashboard for exploring a single cell transcriptomic atlas of Monocytes & Macrophages extracted from humanized MISTRG healthy and tumoral tissues.  — developed by the **Goriely Lab**, Institute of Medical Immunology (IMI), University of Brussels (ULB)
+> An interactive Shiny dashboard for exploring the single cell transcriptomic atlas of Mono/Macro (healthy & tumor-associated from several organs and tissue in MISTRG humanized mice  — developed by Stanislas **Goriely Lab**, Institute of Medical Immunology (IMI), University of Brussels (ULB)
 
 ---
 
@@ -188,4 +188,4 @@ If you use this app in your research, please cite:
 
 ## License
 
-MIT © Goriely Lab, University of Brussels
+MIT © Stanislas Goriely Lab, Université Libre de Bruxelles (said ULB)
