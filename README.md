@@ -188,4 +188,4 @@ If you use this app in your research, please cite:
 
 ## License
 
-MIT © Stanislas Goriely Lab, Université Libre de Bruxelles (said ULB)
+MIT © Stanislas Goriely Lab, Université Libre de Bruxelles (ULB)
