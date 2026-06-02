@@ -490,53 +490,106 @@ degs_data <- eventReactive(input$deg, {
     content  = function(file) write.csv(enrich_results()$down, file, row.names = FALSE))
 
   # ================================================
-  # TAB 3
+  # TAB 3 — TF Network
   # ================================================
 
   full_network <- reactive({ GetTFNetwork(seurat_obj) })
 
-  network_data <- eventReactive(input$update_network, {
-    net           <- full_network() %>% filter(Gain >= input$min_gain)
-    all_tfs_in_net <- unique(net$tf)
-    target_mode   <- nchar(trimws(input$tf_target_search)) > 0
+  # --- Mapping gene/TF -> module (used only when color_by_module is on) ----
+  # Returns a named vector: names = gene symbols, values = module names.
+  # ADAPT THIS to however module membership is stored in your object.
+  module_map <- reactive({
+    mods <- tryCatch(GetModules(seurat_obj), error = function(e) NULL)
+    if (is.null(mods) || !all(c("gene_name", "module") %in% names(mods)))
+      return(NULL)
+    stats::setNames(as.character(mods$module), mods$gene_name)
+  })
 
-    if (target_mode) {
-      tgt   <- trimws(input$tf_target_search)
+  # Distinct palette for modules (recycled if there are many modules)
+  .module_palette <- function(levels) {
+    pal <- c("#2980b9","#e67e22","#27ae60","#8e44ad","#16a085","#d35400",
+             "#2c3e50","#c0392b","#7f8c8d","#f39c12","#1abc9c","#9b59b6",
+             "#34495e","#e74c3c","#3498db","#95a5a6")
+    stats::setNames(pal[(seq_along(levels) - 1) %% length(pal) + 1], levels)
+  }
+
+  network_data <- eventReactive(input$update_network, {
+    net            <- full_network() %>% filter(Gain >= input$min_gain)
+    all_tfs_in_net <- unique(net$tf)
+    mode           <- input$network_mode
+
+    if (mode == "regulators") {
+      # ---- TFs regulating a chosen gene -------------------------------
+      tgt <- trimws(input$tf_target_search)
+      validate(need(nchar(tgt) > 0, "Enter a gene to find its regulators."))
       edges <- net %>% filter(gene == tgt)
       validate(need(nrow(edges) > 0,
-                    paste0("No TFs found regulating '", tgt, "' at current Gain threshold.")))
+                    paste0("No TFs found regulating '", tgt,
+                           "' at current Gain threshold.")))
+      center_node <- tgt
+
+    } else if (mode == "custom") {
+      # ---- Custom set: network among listed elements only -------------
+      elems <- trimws(strsplit(input$tf_custom_set, ",")[[1]])
+      elems <- elems[nchar(elems) > 0]
+      validate(need(length(elems) >= 2,
+                    "Enter at least two comma-separated genes / TFs."))
+      edges <- net %>% filter(tf %in% elems & gene %in% elems)
+      validate(need(nrow(edges) > 0,
+                    "No interactions found among the listed elements at current Gain threshold."))
+      center_node <- NA_character_
+
     } else {
-      tf <- input$tf_center
+      # ---- Targets of a chosen TF (default) ---------------------------
+      tf <- trimws(input$tf_center)
       validate(need(tf %in% net$tf, paste0("TF '", tf, "' not found in network.")))
-      primary <- net %>% filter(tf == !!tf) %>% arrange(desc(Gain)) %>% head(input$n_top_targets)
-      edges   <- primary
+      primary <- net %>% filter(tf == !!tf) %>%
+        arrange(desc(Gain)) %>% head(input$n_top_targets)
+      edges <- primary
       if (input$target_level == 2) {
         secondary <- net %>% filter(tf %in% primary$gene) %>%
           arrange(desc(Gain)) %>% head(input$n_top_targets * 2)
         edges <- bind_rows(primary, secondary) %>% distinct()
       }
+      center_node <- tf
     }
 
     if (isTRUE(input$tf_tf_only)) {
       edges <- edges %>% filter(gene %in% all_tfs_in_net)
-      validate(need(nrow(edges) > 0, "No TF–TF interactions found."))
+      validate(need(nrow(edges) > 0, "No TF-TF interactions found."))
     }
 
     all_nodes  <- unique(c(edges$tf, edges$gene))
     is_tf_node <- all_nodes %in% all_tfs_in_net
-    center_node <- if (target_mode) trimws(input$tf_target_search) else input$tf_center
+
+    # ---- Node colouring ------------------------------------------------
+    if (isTRUE(input$color_by_module) && !is.null(module_map())) {
+      mm        <- module_map()
+      node_mod  <- unname(mm[all_nodes])           # module per node (NA if unknown)
+      mod_levels <- sort(unique(node_mod[!is.na(node_mod)]))
+      mod_cols   <- .module_palette(mod_levels)
+      node_color <- ifelse(is.na(node_mod), "#566573", mod_cols[node_mod])
+      # keep the center visually distinct even in module mode
+      node_color[all_nodes == center_node] <- "#e74c3c"
+      node_title_extra <- ifelse(is.na(node_mod), "",
+                                 paste0("<br>Module: ", node_mod))
+    } else {
+      node_color <- ifelse(all_nodes == center_node, "#e74c3c",
+                    ifelse(is_tf_node, "#2980b9", "#7f8c8d"))
+      node_title_extra <- ""
+    }
 
     nodes_df <- data.frame(
       id    = all_nodes,
       label = all_nodes,
-      color = ifelse(all_nodes == center_node, "#e74c3c",
-              ifelse(is_tf_node, "#2980b9", "#7f8c8d")),
+      color = node_color,
       shape = ifelse(is_tf_node, "diamond", "dot"),
-      size  = ifelse(all_nodes == center_node, 24,
+      size  = ifelse(!is.na(center_node) & all_nodes == center_node, 24,
               ifelse(is_tf_node, 18, 12)),
       title = paste0("<b>", all_nodes, "</b><br>",
-                     ifelse(all_nodes == center_node, "⭐ Center",
-                     ifelse(is_tf_node, "🔵 TF", "⚫ Target"))),
+                     ifelse(!is.na(center_node) & all_nodes == center_node, "Center",
+                     ifelse(is_tf_node, "TF", "Target")),
+                     node_title_extra),
       font.color = "#ffffff",
       stringsAsFactors = FALSE
     )
@@ -546,7 +599,8 @@ degs_data <- eventReactive(input$deg, {
       to     = edges$gene,
       value  = scales::rescale(edges$Gain, c(1, 5)),
       color  = ifelse(edges$Cor > 0, "#c0392b", "#2980b9"),
-      title  = paste0("Gain: ", round(edges$Gain, 3), " | Cor: ", round(edges$Cor, 3)),
+      title  = paste0("Gain: ", round(edges$Gain, 3),
+                      " | Cor: ", round(edges$Cor, 3)),
       arrows = "to",
       stringsAsFactors = FALSE
     )
@@ -559,7 +613,8 @@ degs_data <- eventReactive(input$deg, {
     nd <- network_data()
     physics_solver <- switch(input$network_layout,
       "circle" = "repulsion", "fr" = "forceAtlas2Based",
-      "kk" = "forceAtlas2Based", "drl" = "forceAtlas2Based", "forceAtlas2Based")
+      "kk" = "forceAtlas2Based", "drl" = "forceAtlas2Based",
+      "forceAtlas2Based")
 
     visNetwork(nd$nodes, nd$edges, height = "660px", width = "100%",
                background = "#0f1b2d") %>%
@@ -575,16 +630,45 @@ degs_data <- eventReactive(input$deg, {
                  repulsion = list(nodeDistance = 120),
                  stabilization = list(iterations = 200)) %>%
       visLayout(randomSeed = 42,
-                improvedLayout = (input$network_layout %in% c("nicely", "kk")))
+                improvedLayout = (input$network_layout %in% c("nicely", "kk"))) %>%
+      visExport(type = "png", name = "tf_network",
+                label = "Save as PNG", float = "right")
   })
 
+  # ---- Downloads -----------------------------------------------------
   output$download_network_full <- downloadHandler(
     filename = "tf_network_full.csv",
     content  = function(file) write.csv(full_network(), file, row.names = FALSE))
+
   output$download_network_filtered <- downloadHandler(
-    filename = function() paste0("tf_network_filtered_", input$tf_center, ".csv"),
+    filename = function() {
+      tag <- switch(input$network_mode,
+        "regulators" = trimws(input$tf_target_search),
+        "custom"     = "custom_set",
+        trimws(input$tf_center))
+      paste0("tf_network_filtered_", tag, ".csv")
+    },
     content  = function(file) {
       req(network_data()); write.csv(network_data()$raw_edges, file, row.names = FALSE)
+    })
+
+  # ---- Network PNG download -----------------------------------------
+  # visNetwork is an HTML widget: render to a temporary HTML page, then
+  # snapshot it to PNG with webshot2 (requires the 'webshot2' package).
+  output$download_network_image <- downloadHandler(
+    filename = "tf_network.png",
+    content  = function(file) {
+      req(network_data())
+      nd <- network_data()
+      widget <- visNetwork(nd$nodes, nd$edges, background = "#0f1b2d") %>%
+        visEdges(smooth = list(type = "curvedCW", roundness = 0.15),
+                 arrows = list(to = list(enabled = TRUE, scaleFactor = 0.6))) %>%
+        visNodes(font = list(size = 13, color = "#ffffff")) %>%
+        visPhysics(stabilization = list(iterations = 200))
+      tmp_html <- tempfile(fileext = ".html")
+      visNetwork::visSave(widget, tmp_html, selfcontained = TRUE)
+      webshot2::webshot(tmp_html, file = file, delay = 1.5,
+                        vwidth = 1200, vheight = 800)
     })
 
   # ================================================
