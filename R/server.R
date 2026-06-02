@@ -621,7 +621,13 @@ degs_data <- eventReactive(input$deg, {
     else paste0("Gene:   ", g, "\nModule: ", res$module[1],
                 "\nkME:    ", round(res$kME_own[1], 4))
   })
-  output$gene_lookup_result <- renderPrint({ req(gene_lookup_result()); gene_lookup_result() })
+  #output$gene_lookup_result <- renderPrint({ req(gene_lookup_result()); gene_lookup_result() })
+
+
+  output$gene_lookup_result <- renderText({
+  req(gene_lookup_result())
+  gene_lookup_result()
+})
 
   output$coexp_module_selector <- renderUI({
     req(coexp_data())
