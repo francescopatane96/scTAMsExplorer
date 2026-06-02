@@ -48,7 +48,7 @@
 #' @importFrom SeuratObject Idents<-
 #' @importFrom tibble rownames_to_column
 #' @importFrom plotly ggplotly renderPlotly
-#' @importFrom visNetwork visNetwork visEdges visNodes visOptions
+#' @importFrom visNetwork visNetwork visEdges visNodes visOptions visExport
 #' @importFrom visNetwork visInteraction visPhysics visLayout
 #' @importFrom visNetwork renderVisNetwork
 #' @importFrom ggrepel geom_text_repel
@@ -631,8 +631,8 @@ degs_data <- eventReactive(input$deg, {
                  stabilization = list(iterations = 200)) %>%
       visLayout(randomSeed = 42,
                 improvedLayout = (input$network_layout %in% c("nicely", "kk"))) %>%
-      #visExport(type = "png", name = "tf_network",
-      #          label = "Save as PNG", float = "right")
+      visExport(type = "png", name = "tf_network",
+                label = "Save as PNG", float = "right")
   })
 
   # ---- Downloads -----------------------------------------------------
