@@ -363,7 +363,7 @@ atlas_ui <- function(metadata_choices) {
               shiny::textInput("tf_target_search", "Find TFs regulating gene:", ""),
               shiny::h4("Filters"),
               shiny::sliderInput("min_gain",      "Min Gain:",
-                min = 0, max = 1, value = 0.05, step = 0.01),
+                min = 0, max = 1, value = 0.01, step = 0.01),
               shiny::sliderInput("n_top_targets", "Top N targets:",
                 min = 5, max = 200, value = 50),
               shiny::radioButtons("target_level", "Depth:",
@@ -389,7 +389,7 @@ atlas_ui <- function(metadata_choices) {
                 shiny::tags$div(class = "card-title", "TF Interaction Network",
                   shiny::tags$span(
                     style = "font-size:11px;color:#8099b4;font-weight:400;margin-left:8px;",
-                    "Blue diamond = TF | Grey dot = target | Red = center | Blue edge = pos | Red edge = neg"
+                    "Blue diamond = TF | Grey dot = target | Red = center | Blue edge = inhibition | Red edge = activation"
                   )
                 ),
                 visNetwork::visNetworkOutput("network_plot", height = "680px")
@@ -461,7 +461,7 @@ atlas_ui <- function(metadata_choices) {
               shiny::helpText("Leave 'All modules' to show all TFs."),
               shiny::h5("Network filters"),
               shiny::sliderInput("reg_min_gain", "Min Gain:",
-                min = 0, max = 1, value = 0.05, step = 0.01),
+                min = 0, max = 1, value = 0.01, step = 0.01),
               shiny::sliderInput("reg_min_regulon_size",
                 "Min regulon size (pos/neg):", min = 1, max = 50, value = 5),
               shiny::h5("Display"),
