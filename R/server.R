@@ -545,7 +545,7 @@ degs_data <- eventReactive(input$deg, {
       from   = edges$tf,
       to     = edges$gene,
       value  = scales::rescale(edges$Gain, c(1, 5)),
-      color  = ifelse(edges$Cor > 0, "#2980b9", "#c0392b"),
+      color  = ifelse(edges$Cor > 0, "#c0392b", "#2980b9"),
       title  = paste0("Gain: ", round(edges$Gain, 3), " | Cor: ", round(edges$Cor, 3)),
       arrows = "to",
       stringsAsFactors = FALSE
@@ -722,13 +722,6 @@ degs_data <- eventReactive(input$deg, {
     )
   })
   
-  # ----------------------------------------------------------------
-  # Cached AverageExpression on a downsampled subset.
-  # Computing AverageExpression on full atlas is the heaviest single
-  # operation in the app. Downsampling to 5000 cells per cluster keeps
-  # the means statistically stable while cutting memory by an order
-  # of magnitude. Cached as a reactive so it runs once per session.
-  # ----------------------------------------------------------------
 avg_expr_cached <- reactive({
   validate(need("Population_level3" %in% colnames(seurat_obj@meta.data),
                 "Metadata column 'Population_level3' not found in the Seurat object."))
@@ -741,7 +734,7 @@ avg_expr_cached <- reactive({
   )[[1]]
   
   as.matrix(am)
-}) # here
+}) 
 
 reg_heatmap_data <- eventReactive(input$run_reg_heatmap, {
   withProgress(message = "Building TF regulon heatmap...", value = 0, {
