@@ -631,8 +631,8 @@ degs_data <- eventReactive(input$deg, {
                  stabilization = list(iterations = 200)) %>%
       visLayout(randomSeed = 42,
                 improvedLayout = (input$network_layout %in% c("nicely", "kk"))) %>%
-      visExport(type = "png", name = "tf_network",
-                label = "Save as PNG", float = "right")
+      #visExport(type = "png", name = "tf_network",
+      #          label = "Save as PNG", float = "right")
   })
 
   # ---- Downloads -----------------------------------------------------
