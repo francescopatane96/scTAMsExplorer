@@ -47,8 +47,8 @@
 #' Build the Shiny UI for the Atlas Explorer
 #'
 #' Constructs the dashboard UI with five main tabs (UMAP +
-#' Expression, DEGs + Volcano + Enrichment, TF Network,
-#' Co-expression Modules, TF Regulon Heatmap) plus an About
+#' Expression, DEGs + Volcano + Enrichment, Co-expression
+#' Modules, TF Network, TF Regulon Heatmap) plus an About
 #' landing page. All input widgets are populated from the
 #' supplied `metadata_choices`.
 #'
@@ -116,8 +116,7 @@ atlas_ui <- function(metadata_choices) {
                      "Bioinformatics - scRNA-seq - Single-cell Atlas"),
     shiny::tags$h2("Welcome to scTAMsExplorer"),
     shiny::tags$p(
-      "
-An interactive dashboard for exploring a single-cell RNA-seq atlas of human monocytes and macrophages profiled in vivo.",
+      "An interactive dashboard for exploring a single-cell RNA-seq atlas of human monocytes and macrophages profiled in vivo.",
       "All computations run live on the Seurat object passed to ",
       shiny::tags$code("launch_explorer()"), "."
     )
@@ -170,12 +169,6 @@ shiny::tags$p(
                 ),
                 "), under review at ", shiny::tags$em("Nature Communications"), "."
               ),
-              #shiny::tags$p(
-              #  "Dimensionality reduction: PCA + UMAP on the Harmony-corrected embedding",
-              #  " (", shiny::tags$code("umap.harmony"), ").",
-              #  " Cell-type annotation at multiple resolution levels (Population_level1-3).",
-              #  " TF activity inferred via GRN; co-expression modules identified with hdWGCNA."
-              #),
               shiny::tags$div(class = "ds-meta",
                 lapply(
                   c("10x Genomics Chromium", "Harmony integration",
@@ -201,19 +194,19 @@ shiny::tags$p(
                 "p-value and log2FC threshold sliders",
                 "Enrichment run separately via EnrichR",
                 "Full geneset tables, UP and DOWN CSVs")),
-              .feature_card(shiny::HTML("&#127760;"), "TF Interaction Network", list(
-                "Interactive drag-and-zoom visNetwork graph",
-                "5 layout algorithms to choose from",
-                "Filter by Gain threshold and top N targets",
-                "Reverse search: find TFs regulating a gene",
-                "TF-TF only interaction mode",
-                "Full DB or filtered network CSV download")),
               .feature_card(shiny::HTML("&#128279;"), "Co-expression Modules", list(
                 "hdWGCNA hub gene tables (ranked by kME)",
                 "Module size overview table",
                 "Gene to Module lookup by gene name",
                 "Per-module pathway enrichment (EnrichR)",
                 "Sortable, filterable, paginated tables")),
+              .feature_card(shiny::HTML("&#127760;"), "TF Interaction Network", list(
+                "Interactive drag-and-zoom visNetwork graph",
+                "5 layout algorithms to choose from",
+                "Filter by Gain threshold and top N targets",
+                "Targets of a TF, regulators of a gene, or custom set",
+                "Optional colouring by module of origin",
+                "TF-TF only mode; PNG and CSV download")),
               .feature_card(shiny::HTML("&#127919;"), "TF Regulon Heatmap", list(
                 "Dot heatmap: TF expression vs regulon activity",
                 "Side-by-side positive and negative regulons",
@@ -265,16 +258,20 @@ shiny::tags$p(
                   "Population_level3" else metadata_choices[1]),
               shiny::uiOutput("cluster_selector"),
               shiny::h4("Expression"),
-              textInput("feature", "Gene / Feature:", value = "MS4A1"),
-              actionButton("go_feature", "OK"),
-              shiny::textInput("feature2", "Gene 2 (blend / heatmap / dot):",
-                               value = "CD3D"),
+              # Plot type is chosen FIRST, before the gene inputs
               shiny::radioButtons("plot_type", "Plot type:",
                 choices = c("FeaturePlot" = "feature", "VlnPlot" = "vln",
                             "DotPlot" = "dot", "Heatmap" = "heatmap")),
+              shiny::textInput("feature", "Gene / Feature:", value = "MS4A1"),
+              shiny::actionButton("go_feature", "OK"),
+              # Blend toggle only makes sense for FeaturePlot
               shiny::conditionalPanel("input.plot_type == 'feature'",
                 shiny::checkboxInput("blend_mode",
                   "Blend two genes (co-expression)", FALSE)),
+              # Gene 2 box appears ONLY when blend is enabled
+              shiny::conditionalPanel(
+                "input.plot_type == 'feature' && input.blend_mode",
+                shiny::textInput("feature2", "Gene 2 (blend):", value = "CD3D")),
               shiny::conditionalPanel(
                 "input.plot_type == 'feature' || input.plot_type == 'vln'",
                 shiny::checkboxInput("use_split", "Split by metadata", FALSE),
@@ -384,52 +381,7 @@ shiny::tags$p(
           )
         ),
 
-        # ---- Tab 3: TF Network -------------------------------------
-        shiny::tabPanel(.tab_label("&#127760;", "TF Network"),
-          shiny::sidebarLayout(
-            shiny::sidebarPanel(width = 3,
-              shiny::h4("Source TF"),
-              shiny::textInput("tf_center", "TF (source):", "MAFB"),
-              shiny::h4("Reverse search"),
-              shiny::textInput("tf_target_search", "Find TFs regulating gene:", ""),
-              shiny::h4("Filters"),
-              shiny::sliderInput("min_gain",      "Min Gain:",
-                min = 0, max = 1, value = 0.01, step = 0.01),
-              shiny::sliderInput("n_top_targets", "Top N targets:",
-                min = 5, max = 200, value = 50),
-              shiny::radioButtons("target_level", "Depth:",
-                choices = c("1-step" = 1, "2-step" = 2)),
-              shiny::checkboxInput("tf_tf_only",
-                "Show only TF-TF interactions", FALSE),
-              shiny::h4("Layout"),
-              shiny::selectInput("network_layout", "Algorithm:",
-                choices = c(
-                  "Fruchterman-Reingold" = "fr",
-                  "Kamada-Kawai"         = "kk",
-                  "Large graph (DrL)"    = "drl",
-                  "Circle"               = "circle",
-                  "Nicely"               = "nicely")),
-              shiny::actionButton("update_network", "Update network",
-                icon = shiny::icon("rotate"), class = "btn-primary"),
-              shiny::hr(), shiny::h5("Downloads"),
-              shiny::downloadButton("download_network_full",     "Full interaction DB (CSV)"),
-              shiny::downloadButton("download_network_filtered", "Filtered network (CSV)")
-            ),
-            shiny::mainPanel(width = 9,
-              shiny::tags$div(class = "card",
-                shiny::tags$div(class = "card-title", "TF Interaction Network",
-                  shiny::tags$span(
-                    style = "font-size:11px;color:#8099b4;font-weight:400;margin-left:8px;",
-                    "Blue diamond = TF | Grey dot = target | Red = center | Blue edge = inhibition | Red edge = activation"
-                  )
-                ),
-                visNetwork::visNetworkOutput("network_plot", height = "680px")
-              )
-            )
-          )
-        ),
-
-        # ---- Tab 4: Modules ----------------------------------------
+        # ---- Tab 3: Modules ----------------------------------------
         shiny::tabPanel(.tab_label("&#128279;", "Modules"),
           shiny::sidebarLayout(
             shiny::sidebarPanel(width = 3,
@@ -478,6 +430,72 @@ shiny::tags$p(
                   shiny::textOutput("enrich_module_title", inline = TRUE)),
                 shiny::uiOutput("coexp_enrich_container"), shiny::hr(),
                 DT::DTOutput("coexp_enrich_table"))
+            )
+          )
+        ),
+
+        # ---- Tab 4: TF Network -------------------------------------
+        shiny::tabPanel(.tab_label("&#127760;", "TF Network"),
+          shiny::sidebarLayout(
+            shiny::sidebarPanel(width = 3,
+              shiny::h4("Network mode"),
+              shiny::radioButtons("network_mode", NULL,
+                choices = c(
+                  "Targets of a TF"            = "targets",
+                  "TFs regulating a gene"      = "regulators",
+                  "Custom set of elements"     = "custom"),
+                selected = "targets"),
+
+              # Only the input for the selected mode is shown
+              shiny::conditionalPanel("input.network_mode == 'targets'",
+                shiny::textInput("tf_center", "TF (source):", "MAFB")),
+              shiny::conditionalPanel("input.network_mode == 'regulators'",
+                shiny::textInput("tf_target_search",
+                                 "Find TFs regulating gene:", "")),
+              shiny::conditionalPanel("input.network_mode == 'custom'",
+                shiny::textInput("tf_custom_set",
+                                 "Elements (comma-separated):", ""),
+                shiny::helpText("Network is built among the listed genes / TFs only.")),
+
+              shiny::h4("Filters"),
+              shiny::sliderInput("min_gain",      "Min Gain:",
+                min = 0, max = 1, value = 0.01, step = 0.01),
+              shiny::sliderInput("n_top_targets", "Top N targets:",
+                min = 5, max = 200, value = 50),
+              shiny::radioButtons("target_level", "Depth:",
+                choices = c("1-step" = 1, "2-step" = 2)),
+              shiny::checkboxInput("tf_tf_only",
+                "Show only TF-TF interactions", FALSE),
+
+              shiny::h4("Appearance"),
+              shiny::checkboxInput("color_by_module",
+                "Colour TFs & targets by module of origin", FALSE),
+
+              shiny::h4("Layout"),
+              shiny::selectInput("network_layout", "Algorithm:",
+                choices = c(
+                  "Fruchterman-Reingold" = "fr",
+                  "Kamada-Kawai"         = "kk",
+                  "Large graph (DrL)"    = "drl",
+                  "Circle"               = "circle",
+                  "Nicely"               = "nicely")),
+              shiny::actionButton("update_network", "Update network",
+                icon = shiny::icon("rotate"), class = "btn-primary"),
+              shiny::hr(), shiny::h5("Downloads"),
+              shiny::downloadButton("download_network_image",    "Network PNG"),
+              shiny::downloadButton("download_network_full",     "Full interaction DB (CSV)"),
+              shiny::downloadButton("download_network_filtered", "Filtered network (CSV)")
+            ),
+            shiny::mainPanel(width = 9,
+              shiny::tags$div(class = "card",
+                shiny::tags$div(class = "card-title", "TF Interaction Network",
+                  shiny::tags$span(
+                    style = "font-size:11px;color:#8099b4;font-weight:400;margin-left:8px;",
+                    "Blue diamond = TF | Grey dot = target | Red = center | Blue edge = inhibition | Red edge = activation"
+                  )
+                ),
+                visNetwork::visNetworkOutput("network_plot", height = "680px")
+              )
             )
           )
         ),
