@@ -30,13 +30,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # libraries for tf network screenshot 
 # ------------------------------------------------------------
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        chromium \
-        libnss3 libgbm1 libasound2 libxshmfence1 libxcomposite1 \
-        libxdamage1 libxrandr2 libxkbcommon0 libpangocairo-1.0-0 \
-        fonts-liberation \
+        wget gnupg ca-certificates \
+    && wget -q -O /tmp/chrome.deb \
+        https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+    && apt-get install -y --no-install-recommends /tmp/chrome.deb \
+    && rm -f /tmp/chrome.deb \
     && rm -rf /var/lib/apt/lists/*
 
-ENV CHROMOTE_CHROME=/usr/bin/chromium
+ENV CHROMOTE_CHROME=/usr/bin/google-chrome
 
 # ------------------------------------------------------------
 # CRAN packages (binaries from P3M -> fast, no compilation)
