@@ -642,7 +642,7 @@ visNetwork(nd$nodes, nd$edges, height = "680px", width = "100%",
                               label = list(enabled = TRUE, min = 18, max = 34))) %>%
       visOptions(highlightNearest = list(enabled = TRUE, degree = 1,
                                          hover = TRUE,
-                                         hideColor = "rgba(200,200,200,0.08)",
+                                         hideColor = "rgba(200,200,200,0)",
                                          labelOnly = FALSE),
                  nodesIdSelection = list(enabled = TRUE,
                    style = "background:#162032;color:#1cb5bf;border:1px solid #1cb5bf;border-radius:4px;padding:3px")) %>%
