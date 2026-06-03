@@ -27,6 +27,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
 
 # ------------------------------------------------------------
+# libraries for tf network screenshot 
+# ------------------------------------------------------------
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        chromium \
+        libnss3 libgbm1 libasound2 libxshmfence1 libxcomposite1 \
+        libxdamage1 libxrandr2 libxkbcommon0 libpangocairo-1.0-0 \
+        fonts-liberation \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV CHROMOTE_CHROME=/usr/bin/chromium
+
+# ------------------------------------------------------------
 # CRAN packages (binaries from P3M -> fast, no compilation)
 # ------------------------------------------------------------
 
