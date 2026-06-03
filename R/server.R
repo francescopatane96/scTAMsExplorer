@@ -59,6 +59,7 @@
 #' @importFrom grid unit
 #' @importFrom utils write.csv head
 #' @importFrom stats reorder
+#' @importFrom webshot2 webshot
 #'
 #' @keywords internal
 atlas_server <- function(seurat_obj, metadata_choices) {

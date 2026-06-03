@@ -93,3 +93,7 @@ importFrom(visNetwork, visExport)
 # ---- grid (used in regulon plot composition) ----------------
 
 importFrom(grid, unit)
+
+# ---- webshot2
+
+importFrom(webshot2, webshot)
