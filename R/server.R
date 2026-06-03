@@ -667,7 +667,7 @@ degs_data <- eventReactive(input$deg, {
         visNodes(font = list(size = 13, color = "#ffffff")) %>%
         visPhysics(stabilization = list(iterations = 200))
       tmp_html <- tempfile(fileext = ".html")
-      visNetwork::visSave(widget, tmp_html, selfcontained = TRUE)
+      visNetwork::visSave(widget, tmp_html, selfcontained = FALSE)
       webshot2::webshot(tmp_html, file = file, delay = 1.5,
                         vwidth = 1200, vheight = 800)
     })
