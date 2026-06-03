@@ -48,7 +48,7 @@
 #' @importFrom SeuratObject Idents<-
 #' @importFrom tibble rownames_to_column
 #' @importFrom plotly ggplotly renderPlotly
-#' @importFrom visNetwork visNetwork visEdges visNodes visOptions visExport
+#' @importFrom visNetwork visNetwork visEdges visNodes visOptions visExport visIgraphLayout
 #' @importFrom visNetwork visInteraction visPhysics visLayout
 #' @importFrom visNetwork renderVisNetwork
 #' @importFrom ggrepel geom_text_repel

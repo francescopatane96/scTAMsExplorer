@@ -83,6 +83,7 @@ importFrom(visNetwork, visNodes)
 importFrom(visNetwork, visOptions)
 importFrom(visNetwork, visPhysics)
 importFrom(visNetwork, visExport)
+importFrom(visNetwork, visIgraphLayout)
 
 
 # ---- DT-specific exports already covered by import(DT) -------
