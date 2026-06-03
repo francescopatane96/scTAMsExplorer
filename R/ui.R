@@ -497,10 +497,19 @@ shiny::tags$p(
             ),
             shiny::mainPanel(width = 9,
               shiny::tags$div(class = "card",
-                shiny::tags$div(class = "card-title", "TF Interaction Network",
+               shiny::tags$div(class = "card-title", "TF Interaction Network",
                   shiny::tags$span(
                     style = "font-size:11px;color:#8099b4;font-weight:400;margin-left:8px;",
                     "Blue diamond = TF | Grey dot = target | Red = center | Blue edge = inhibition | Red edge = activation"
+                  ),
+                  shiny::tags$div(
+                    style = "font-size:11px;color:#8099b4;font-weight:400;margin-top:6px;",
+                    "Modules (when coloured by module): ",
+                    shiny::tags$span(style = "color:#2563EB;font-weight:600;", "\u25CF Module 1  "),
+                    shiny::tags$span(style = "color:#E67E22;font-weight:600;", "\u25CF Module 2  "),
+                    shiny::tags$span(style = "color:#5DADE2;font-weight:600;", "\u25CF Module 3  "),
+                    shiny::tags$span(style = "color:#E84393;font-weight:600;", "\u25CF Module 4  "),
+                    shiny::tags$span(style = "color:#F1C40F;font-weight:600;", "\u25CF Module 5")
                   )
                 ),
                 visNetwork::visNetworkOutput("network_plot", height = "680px")
