@@ -510,11 +510,11 @@ degs_data <- eventReactive(input$deg, {
  # Fixed module -> colour map (stable across all networks)
   .module_palette <- function(levels) {
     fixed <- c(
-      "Module 1" = "#2563EB",   # blu
-      "Module 2" = "#E67E22",   # arancio
-      "Module 3" = "#5DADE2",   # azzurro
-      "Module 4" = "#E84393",   # rosa
-      "Module 5" = "#F1C40F"    # giallo
+      "Mod-1" = "#2563EB",   # blu
+      "Mod-2" = "#E67E22",   # arancio
+      "Mod-3" = "#5DADE2",   # azzurro
+      "Mod-4" = "#E84393",   # rosa
+      "Mod-5" = "#F1C40F"    # giallo
     )
     # restituisce il colore fisso per ogni modulo presente; grigio se non mappato
     cols <- fixed[levels]
