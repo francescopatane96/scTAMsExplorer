@@ -48,7 +48,7 @@
 #' @importFrom SeuratObject Idents<-
 #' @importFrom tibble rownames_to_column
 #' @importFrom plotly ggplotly renderPlotly
-#' @importFrom visNetwork visNetwork visEdges visNodes visOptions visExport visIgraphLayout
+#' @importFrom visNetwork visNetwork visEdges visNodes visOptions visExport
 #' @importFrom visNetwork visInteraction visPhysics visLayout
 #' @importFrom visNetwork renderVisNetwork
 #' @importFrom ggrepel geom_text_repel
@@ -614,26 +614,25 @@ degs_data <- eventReactive(input$deg, {
   output$network_plot <- renderVisNetwork({
     req(network_data())
     nd <- network_data()
+    physics_solver <- switch(input$network_layout,
+      "circle" = "repulsion", "fr" = "forceAtlas2Based",
+      "kk" = "forceAtlas2Based", "drl" = "forceAtlas2Based",
+      "forceAtlas2Based")
 
-    # Map UI choice -> igraph layout function
-    ig_layout <- switch(input$network_layout,
-      "fr"     = "layout_with_fr",     # Fruchterman-Reingold
-      "kk"     = "layout_with_kk",     # Kamada-Kawai
-      "drl"    = "layout_with_drl",    # DrL (large graphs)
-      "circle" = "layout_in_circle",   # Circle
-      "nicely" = "layout_nicely",      # Nicely (auto)
-      "layout_nicely")
-
-    visNetwork(nd$nodes, nd$edges, height = "680px", width = "100%",
-               background = "#0f1b2d") %>%
-      visIgraphLayout(layout = ig_layout, randomSeed = 42) %>%   # static, distinct layouts
+      visNetwork(nd$nodes, nd$edges, height = "680px", width = "100%", background = "#0f1b2d") %>%   
       visEdges(smooth = list(type = "curvedCW", roundness = 0.15),
                arrows = list(to = list(enabled = TRUE, scaleFactor = 0.6))) %>%
       visNodes(font = list(size = 13, color = "#ffffff")) %>%
       visOptions(highlightNearest = list(enabled = TRUE, degree = 1, hover = TRUE),
                  nodesIdSelection = list(enabled = TRUE,
                    style = "background:#162032;color:#1cb5bf;border:1px solid #1cb5bf;border-radius:4px;padding:3px")) %>%
-      visInteraction(navigationButtons = TRUE, zoomView = TRUE, tooltipDelay = 100)
+      visInteraction(navigationButtons = TRUE, zoomView = TRUE, tooltipDelay = 100) %>%
+      visPhysics(solver = physics_solver,
+                 forceAtlas2Based = list(gravitationalConstant = -60),
+                 repulsion = list(nodeDistance = 120),
+                 stabilization = list(iterations = 200)) %>%
+      visLayout(randomSeed = 42,
+                improvedLayout = (input$network_layout %in% c("nicely", "kk"))) 
   })
 
   # ---- Downloads -----------------------------------------------------
