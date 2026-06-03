@@ -649,7 +649,7 @@ visNetwork(nd$nodes, nd$edges, height = "680px", width = "100%",
       visOptions(highlightNearest = list(enabled = TRUE, degree = 1,
                                          hover = TRUE,
                                          hideColor = "rgba(200,200,200,0.1)",
-                                         labelOnly = FALSE),
+                                         labelOnly = FALSE, algorithm = "all"),
                  nodesIdSelection = list(enabled = TRUE,
                    style = "background:#162032;color:#1cb5bf;border:1px solid #1cb5bf;border-radius:4px;padding:3px")) %>%
       visInteraction(navigationButtons = TRUE, zoomView = TRUE, tooltipDelay = 100, hover = TRUE)
