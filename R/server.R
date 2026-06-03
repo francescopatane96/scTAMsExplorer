@@ -507,13 +507,18 @@ degs_data <- eventReactive(input$deg, {
   })
 
   # Distinct palette for modules (recycled if there are many modules)
-  .module_palette <- function(levels) {
-  pal <- c("#2563EB",   # blu
-           "#E67E22",   # arancio
-           "#5DADE2",   # azzurro
-           "#E84393",   # rosa
-           "#F1C40F")   # giallo
-  stats::setNames(pal[(seq_along(levels) - 1) %% length(pal) + 1], levels)
+.module_palette <- function(levels) {
+  fixed <- c(
+    "M-1" = "#2563EB",   # blu
+    "M-2" = "#E67E22",   # arancio
+    "M-3" = "#5DADE2",   # azzurro
+    "M-4" = "#E84393",   # rosa
+    "M-5" = "#F1C40F",    # giallo
+    "grey" = "#566573" 
+  )
+  cols <- fixed[levels]                 # colore per nome modulo (NA se non mappato)
+  cols[is.na(cols)] <- "#566573"        # grigio per moduli fuori lista
+  stats::setNames(cols, levels)
 }
 
   network_data <- eventReactive(input$update_network, {
@@ -635,10 +640,13 @@ visNetwork(nd$nodes, nd$edges, height = "680px", width = "100%",
                            strokeWidth = 3, strokeColor = "#0f1b2d"),
                scaling = list(min = 20, max = 50,           # nodi più grandi
                               label = list(enabled = TRUE, min = 18, max = 34))) %>%
-      visOptions(highlightNearest = list(enabled = TRUE, degree = 1, hover = TRUE),
+      visOptions(highlightNearest = list(enabled = TRUE, degree = 1,
+                                         hover = TRUE,
+                                         hideColor = "rgba(200,200,200,0.15)",
+                                         labelOnly = FALSE),
                  nodesIdSelection = list(enabled = TRUE,
                    style = "background:#162032;color:#1cb5bf;border:1px solid #1cb5bf;border-radius:4px;padding:3px")) %>%
-      visInteraction(navigationButtons = TRUE, zoomView = TRUE, tooltipDelay = 100)
+      visInteraction(navigationButtons = TRUE, zoomView = TRUE, tooltipDelay = 100, hover = TRUE)
   })
 
   # ---- Downloads -----------------------------------------------------
