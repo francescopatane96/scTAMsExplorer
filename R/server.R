@@ -619,7 +619,7 @@ degs_data <- eventReactive(input$deg, {
       "kk" = "forceAtlas2Based", "drl" = "forceAtlas2Based",
       "forceAtlas2Based")
 
-      visNetwork(nd$nodes, nd$edges, height = "660px", width = "100%", background = "#0f1b2d") %>%   
+      visNetwork(nd$nodes, nd$edges, height = "680px", width = "100%", background = "#0f1b2d") %>%   
       visEdges(smooth = list(type = "curvedCW", roundness = 0.15),
                arrows = list(to = list(enabled = TRUE, scaleFactor = 0.6))) %>%
       visNodes(font = list(size = 13, color = "#ffffff")) %>%
