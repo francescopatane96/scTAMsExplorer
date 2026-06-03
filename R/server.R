@@ -618,7 +618,7 @@ degs_data <- eventReactive(input$deg, {
       "kk" = "forceAtlas2Based", "drl" = "forceAtlas2Based",
       "forceAtlas2Based")
 
-      visNetwork(nd$nodes, nd$edges, height = "660px", width = "100%") %>%   # niente background qui
+      visNetwork(nd$nodes, nd$edges, height = "660px", width = "100%", background = "#0f1b2d") %>%   
       visEdges(smooth = list(type = "curvedCW", roundness = 0.15),
                arrows = list(to = list(enabled = TRUE, scaleFactor = 0.6))) %>%
       visNodes(font = list(size = 13, color = "#ffffff")) %>%
@@ -633,7 +633,7 @@ degs_data <- eventReactive(input$deg, {
       visLayout(randomSeed = 42,
                 improvedLayout = (input$network_layout %in% c("nicely", "kk"))) %>%
       visExport(type = "png", name = "tf_network",
-                label = "Save as PNG", float = "right", background = "#0f1b2d")
+                label = "Save as PNG", float = "right")
   })
 
   # ---- Downloads -----------------------------------------------------
