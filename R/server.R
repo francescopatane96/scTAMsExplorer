@@ -616,15 +616,14 @@ degs_data <- eventReactive(input$deg, {
       "kk" = "forceAtlas2Based", "drl" = "forceAtlas2Based",
       "forceAtlas2Based")
 
-    visNetwork(nd$nodes, nd$edges, height = "660px", width = "100%",
-               background = "#0f1b2d") %>%
+      visNetwork(nd$nodes, nd$edges, height = "660px", width = "100%") %>%   # niente background qui
       visEdges(smooth = list(type = "curvedCW", roundness = 0.15),
                arrows = list(to = list(enabled = TRUE, scaleFactor = 0.6))) %>%
       visNodes(font = list(size = 13, color = "#ffffff")) %>%
       visOptions(highlightNearest = list(enabled = TRUE, degree = 1, hover = TRUE),
-                 nodesIdSelection = list(enabled = TRUE, style = "background:#162032;color:#1cb5bf;border:1px solid #1cb5bf;border-radius:4px;padding:3px")) %>%
-      visInteraction(navigationButtons = TRUE, zoomView = TRUE,
-                     tooltipDelay = 100) %>%
+                 nodesIdSelection = list(enabled = TRUE,
+                   style = "background:#162032;color:#1cb5bf;border:1px solid #1cb5bf;border-radius:4px;padding:3px")) %>%
+      visInteraction(navigationButtons = TRUE, zoomView = TRUE, tooltipDelay = 100) %>%
       visPhysics(solver = physics_solver,
                  forceAtlas2Based = list(gravitationalConstant = -60),
                  repulsion = list(nodeDistance = 120),
@@ -632,7 +631,7 @@ degs_data <- eventReactive(input$deg, {
       visLayout(randomSeed = 42,
                 improvedLayout = (input$network_layout %in% c("nicely", "kk"))) %>%
       visExport(type = "png", name = "tf_network",
-                label = "Save as PNG", float = "right")
+                label = "Save as PNG", float = "right", background = "#0f1b2d")
   })
 
   # ---- Downloads -----------------------------------------------------
