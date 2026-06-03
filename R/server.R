@@ -507,11 +507,13 @@ degs_data <- eventReactive(input$deg, {
 
   # Distinct palette for modules (recycled if there are many modules)
   .module_palette <- function(levels) {
-    pal <- c("#2980b9","#e67e22","#27ae60","#8e44ad","#16a085","#d35400",
-             "#2c3e50","#c0392b","#7f8c8d","#f39c12","#1abc9c","#9b59b6",
-             "#34495e","#e74c3c","#3498db","#95a5a6")
-    stats::setNames(pal[(seq_along(levels) - 1) %% length(pal) + 1], levels)
-  }
+  pal <- c("#2563EB",   # blu
+           "#E67E22",   # arancio
+           "#5DADE2",   # azzurro
+           "#E84393",   # rosa
+           "#F1C40F")   # giallo
+  stats::setNames(pal[(seq_along(levels) - 1) %% length(pal) + 1], levels)
+}
 
   network_data <- eventReactive(input$update_network, {
     net            <- full_network() %>% filter(Gain >= input$min_gain)
