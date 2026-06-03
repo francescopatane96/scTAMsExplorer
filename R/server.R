@@ -624,12 +624,17 @@ degs_data <- eventReactive(input$deg, {
       "nicely" = "layout_nicely",
       "layout_nicely")
 
-    visNetwork(nd$nodes, nd$edges, height = "680px", width = "100%",
+visNetwork(nd$nodes, nd$edges, height = "680px", width = "100%",
                background = "#0f1b2d") %>%
       visIgraphLayout(layout = ig_layout, randomSeed = 42) %>%
       visEdges(smooth = list(type = "curvedCW", roundness = 0.15),
-               arrows = list(to = list(enabled = TRUE, scaleFactor = 0.6))) %>%
-      visNodes(font = list(size = 13, color = "#ffffff")) %>%
+               arrows = list(to = list(enabled = TRUE, scaleFactor = 0.6)),
+               width = 2,                                   # archi più spessi
+               scaling = list(min = 2, max = 10)) %>%       # spessore in base a 'value'
+      visNodes(font = list(size = 28, color = "#ffffff",    # label più grandi
+                           strokeWidth = 3, strokeColor = "#0f1b2d"),
+               scaling = list(min = 20, max = 50,           # nodi più grandi
+                              label = list(enabled = TRUE, min = 18, max = 34))) %>%
       visOptions(highlightNearest = list(enabled = TRUE, degree = 1, hover = TRUE),
                  nodesIdSelection = list(enabled = TRUE,
                    style = "background:#162032;color:#1cb5bf;border:1px solid #1cb5bf;border-radius:4px;padding:3px")) %>%
