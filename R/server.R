@@ -507,20 +507,14 @@ degs_data <- eventReactive(input$deg, {
   })
 
   # Distinct palette for modules (recycled if there are many modules)
- # Fixed module -> colour map (stable across all networks)
   .module_palette <- function(levels) {
-    fixed <- c(
-      "Mod-1" = "#2563EB",   # blu
-      "Mod-2" = "#E67E22",   # arancio
-      "Mod-3" = "#5DADE2",   # azzurro
-      "Mod-4" = "#E84393",   # rosa
-      "Mod-5" = "#F1C40F"    # giallo
-    )
-    # restituisce il colore fisso per ogni modulo presente; grigio se non mappato
-    cols <- fixed[levels]
-    cols[is.na(cols)] <- "#566573"
-    stats::setNames(cols, levels)
-  }
+  pal <- c("#2563EB",   # blu
+           "#E67E22",   # arancio
+           "#5DADE2",   # azzurro
+           "#E84393",   # rosa
+           "#F1C40F")   # giallo
+  stats::setNames(pal[(seq_along(levels) - 1) %% length(pal) + 1], levels)
+}
 
   network_data <- eventReactive(input$update_network, {
     net            <- full_network() %>% filter(Gain >= input$min_gain)
