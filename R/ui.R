@@ -91,7 +91,7 @@ atlas_ui <- function(metadata_choices) {
     height = "60"
   ),
   shiny::tags$div(
-    shiny::tags$h1("scTAMsExplorer"),
+    shiny::tags$h1("scTAMsExplorer v1.0"),
     shiny::tags$p(class = "app-subtitle",
                   "Single-cell RNA-seq analysis - Interactive dashboard")
   )
