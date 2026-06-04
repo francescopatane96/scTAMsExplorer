@@ -491,7 +491,7 @@ shiny::tags$p(
               shiny::actionButton("update_network", "Update network",
                 icon = shiny::icon("rotate"), class = "btn-primary"),
               shiny::hr(), shiny::h5("Downloads"),
-              shiny::downloadButton("download_network_image",    "Network PNG"),
+              #shiny::downloadButton("download_network_image",    "Network PNG"),
               shiny::downloadButton("download_network_full",     "Full interaction DB (CSV)"),
               shiny::downloadButton("download_network_filtered", "Filtered network (CSV)")
             ),

@@ -307,7 +307,7 @@ table.dataTable tbody tr:hover { background: var(--teal-lt) !important; }
   font-family: 'Playfair Display', serif; font-size: 28px;
   margin: 0 0 8px; color: var(--white); font-weight: 700;
 }
-.info-hero p { color: #b8d4e8; font-size: 15px; margin: 0; max-width: 700px; line-height: 1.6; }
+.info-hero p { color: #b8d4e8; font-size: 15px; margin: 0; max-width: 680px; line-height: 1.6; }
 .info-hero .hero-badge {
   display: inline-block; background: rgba(15,163,177,0.2);
   border: 1px solid rgba(15,163,177,0.6); color: #6de0ea;
@@ -393,4 +393,11 @@ table.dataTable tbody tr:hover { background: var(--teal-lt) !important; }
   background: var(--bg); color: var(--teal2);
   font-family: 'DM Mono', monospace; font-size: 13px;
   border-radius: 7px; padding: 12px 16px; border: 1px solid var(--border);
+}
+#network_plot,
+#network_plot canvas,
+#network_plot .vis-network {
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box;
 }
