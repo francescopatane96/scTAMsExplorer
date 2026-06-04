@@ -295,7 +295,7 @@ table.dataTable tbody tr:hover { background: var(--teal-lt) !important; }
 .info-hero > h2,
 .info-hero > p,
 .info-hero > .hero-badge {
-  /* lascia che il testo prenda lo spazio rimanente */
+  
 }
 .info-hero::before {
   content: ''; position: absolute; top: -70px; right: -50px;
@@ -307,7 +307,7 @@ table.dataTable tbody tr:hover { background: var(--teal-lt) !important; }
   font-family: 'Playfair Display', serif; font-size: 28px;
   margin: 0 0 8px; color: var(--white); font-weight: 700;
 }
-.info-hero p { color: #b8d4e8; font-size: 15px; margin: 0; max-width: 680px; line-height: 1.6; }
+.info-hero p { color: #b8d4e8; font-size: 15px; margin: 0; max-width: 700px; line-height: 1.6; }
 .info-hero .hero-badge {
   display: inline-block; background: rgba(15,163,177,0.2);
   border: 1px solid rgba(15,163,177,0.6); color: #6de0ea;
