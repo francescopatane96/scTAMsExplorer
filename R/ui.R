@@ -512,7 +512,7 @@ shiny::tags$p(
                     shiny::tags$span(style = "color:#F1C40F;font-weight:600;", "\u25CF Module 5")
                   )
                 ),
-                visNetwork::visNetworkOutput("network_plot", height = "680px")
+                visNetwork::visNetworkOutput("network_plot", height = "800px")
               )
             )
           )
