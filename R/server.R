@@ -629,7 +629,7 @@ degs_data <- eventReactive(input$deg, {
       "nicely" = "layout_nicely",
       "layout_nicely")
 
-visNetwork(nd$nodes, nd$edges, height = "680px", width = "100%",
+visNetwork(nd$nodes, nd$edges, height = "660px", width = "100%",
                background = "#0f1b2d") %>%
       visIgraphLayout(layout = ig_layout, randomSeed = 42) %>%
       visEdges(smooth = list(type = "curvedCW", roundness = 0.15),
@@ -652,8 +652,8 @@ visNetwork(nd$nodes, nd$edges, height = "680px", width = "100%",
                                          labelOnly = FALSE, algorithm = "all"),
                  nodesIdSelection = list(enabled = TRUE,
                    style = "background:#162032;color:#1cb5bf;border:1px solid #1cb5bf;border-radius:4px;padding:3px")) %>%
-      visInteraction(navigationButtons = FALSE, zoomView = TRUE, tooltipDelay = 100, hover = TRUE) %>%
-      visExport(type = "png", name = "tf_network", label = "Download PNG", float = "left")
+      visInteraction(navigationButtons = TRUE, zoomView = TRUE, tooltipDelay = 100, hover = TRUE) %>%
+      visExport(type = "png", name = "tf_network", label = "Download PNG", float = "right")
   })
 
   # ---- Downloads -----------------------------------------------------
