@@ -653,9 +653,7 @@ visNetwork(nd$nodes, nd$edges, height = "680px", width = "100%",
                  nodesIdSelection = list(enabled = TRUE,
                    style = "background:#162032;color:#1cb5bf;border:1px solid #1cb5bf;border-radius:4px;padding:3px")) %>%
       visInteraction(navigationButtons = TRUE, zoomView = TRUE, tooltipDelay = 100, hover = TRUE) %>%
-      visExport(type = "png", name = "tf_network", label = "Download PNG",
-                float = "right",
-                style = "position:absolute; top:10px; right:10px; z-index:10;")
+      visExport(type = "png", name = "tf_network", label = "Download PNG", float = "left")
   })
 
   # ---- Downloads -----------------------------------------------------
