@@ -495,7 +495,7 @@ shiny::tags$p(
               shiny::downloadButton("download_network_full",     "Full interaction DB (CSV)"),
               shiny::downloadButton("download_network_filtered", "Filtered network (CSV)")
             ),
-            shiny::mainPanel(width = 9,
+            shiny::mainPanel(width = 10,
               shiny::tags$div(class = "card",
                shiny::tags$div(class = "card-title", "TF Interaction Network",
                   shiny::tags$span(
@@ -512,7 +512,7 @@ shiny::tags$p(
                     shiny::tags$span(style = "color:#F1C40F;font-weight:600;", "\u25CF Module 5")
                   )
                 ),
-                visNetwork::visNetworkOutput("network_plot", height = "800px")
+                visNetwork::visNetworkOutput("network_plot", height = "680px")
               )
             )
           )
