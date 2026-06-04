@@ -1,6 +1,6 @@
 # 🧬 scTAMsExplorer
 
-> An interactive Shiny dashboard for exploring the single cell transcriptomic atlas of Mono/Macro (healthy & tumor-associated from several organs and tissue in MISTRG humanized mice  — developed by Stanislas **Goriely Lab**, Institute of Medical Immunology (IMI), University of Brussels (ULB)
+> An interactive Shiny dashboard for exploring the single cell transcriptomic atlas of Mono/Macro (healthy & tumor-associated from several organs and tissue in MISTRG humanized mice  — developed by **Stanislas Goriely Lab**, Institute of Medical Immunology (IMI), Université libre de Bruxelles (ULB)
 
 ---
 
@@ -15,6 +15,12 @@
 | 🎯 **TF Regulon Heatmap** | Dot heatmap of TF expression vs positive/negative regulon activity · module filter · per-TF EnrichR enrichment |
 
 All plots have adjustable **display size**, **download resolution (DPI + inches)**, and **font size**. All tables are sortable, filterable, and paginated via DataTables.
+
+---
+## Online accessible Shiny App
+
+https://tamsexplorer.ulb.be
+
 
 ---
 ## Installation via Docker (recommended way)
