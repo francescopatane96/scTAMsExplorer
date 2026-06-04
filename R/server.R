@@ -629,22 +629,21 @@ degs_data <- eventReactive(input$deg, {
       "nicely" = "layout_nicely",
       "layout_nicely")
 
-visNetwork(nd$nodes, nd$edges, height = "680px", width = "100%",
-               background = "#0f1b2d") %>%
+visNetwork(nd$nodes, nd$edges, height = "680px", width = "100%") %>%   # background tolto da qui
       visIgraphLayout(layout = ig_layout, randomSeed = 42) %>%
       visEdges(smooth = list(type = "curvedCW", roundness = 0.15),
                arrows = list(to = list(enabled = TRUE, scaleFactor = 0.6)),
                width = 2,
-               selectionWidth = 4,                    # archi evidenziati più spessi
+               selectionWidth = 4,
                color = list(
                  inherit    = FALSE,
-                 opacity    = 0.85,                    # opacità normale
-                 highlight  = "#ffffff",               # colore arco quando selezionato
+                 opacity    = 0.85,
+                 highlight  = "#ffffff",
                  hover      = "#ffffff"
                )) %>%
-      visNodes(font = list(size = 28, color = "#ffffff",    # label più grandi
+      visNodes(font = list(size = 28, color = "#ffffff",
                            strokeWidth = 3, strokeColor = "#0f1b2d"),
-               scaling = list(min = 20, max = 50,           # nodi più grandi
+               scaling = list(min = 20, max = 50,
                               label = list(enabled = TRUE, min = 18, max = 34))) %>%
       visOptions(highlightNearest = list(enabled = TRUE, degree = 1,
                                          hover = TRUE,
@@ -652,7 +651,9 @@ visNetwork(nd$nodes, nd$edges, height = "680px", width = "100%",
                                          labelOnly = FALSE, algorithm = "all"),
                  nodesIdSelection = list(enabled = TRUE,
                    style = "background:#162032;color:#1cb5bf;border:1px solid #1cb5bf;border-radius:4px;padding:3px")) %>%
-      visInteraction(navigationButtons = TRUE, zoomView = TRUE, tooltipDelay = 100, hover = TRUE)
+      visInteraction(navigationButtons = TRUE, zoomView = TRUE, tooltipDelay = 100, hover = TRUE) %>%
+      visExport(type = "png", name = "tf_network",
+                label = "Download PNG", float = "right", background = "#0f1b2d")
   })
 
   # ---- Downloads -----------------------------------------------------
