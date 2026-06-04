@@ -629,7 +629,7 @@ degs_data <- eventReactive(input$deg, {
       "nicely" = "layout_nicely",
       "layout_nicely")
 
-visNetwork(nd$nodes, nd$edges, height = "660px", width = "100%",
+visNetwork(nd$nodes, nd$edges, height = "680px", width = "100%",
                background = "#0f1b2d") %>%
       visIgraphLayout(layout = ig_layout, randomSeed = 42) %>%
       visEdges(smooth = list(type = "curvedCW", roundness = 0.15),
