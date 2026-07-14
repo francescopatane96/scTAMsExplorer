@@ -65,7 +65,7 @@
 atlas_server <- function(seurat_obj, metadata_choices) {
   function(input, output, session) {
 
-    ```r
+  
 # ================================================
 # TAB 1
 # ================================================
@@ -399,7 +399,7 @@ output$download_expr_plot <- downloadHandler(
     )
   }
 )
-```
+
 
   # ================================================
   # TAB 2
