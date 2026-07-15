@@ -231,13 +231,14 @@ shiny::tags$p(
                 "All results: PNG and CSV download buttons"))
             ),
 
-           initStore("all", rpkg.api.key="60f0818d948a191091df8a7d522b8899260735c8aee0d6f3bfbdc804cb8df732"),
-           h2("Save App Views"), hr(),
-           viewsBox("viewsshow", "loading views..."),
-           h2("Save App Likes, and allow user to Like!"),hr(),
-           lfButton("followt",suffix="followers"),
-           hr(),p(p(i("Like or Follow and Refresh the page - the values are saved and the views are incremented."))),
-
+           shinyStorePlus::initStore("all", rpkg.api.key = "60f0818d948a191091df8a7d522b8899260735c8aee0d6f3bfbdc804cb8df732"),
+h2("Save App Views"), hr(),
+shinyStorePlus::viewsBox("viewsshow", "loading views..."),
+h2("Save App Likes, and allow user to Like!"), hr(),
+shinyStorePlus::lfButton("liket", suffix = "likes"),
+h2("Save App Followers, and allow user to Follow!"), hr(),
+shinyStorePlus::lfButton("followt", suffix = "followers"),
+hr(), p(p(i("Like or Follow and Refresh the page - the values are saved and the views are incremented."))),
 
             shiny::tags$div(class = "card",
               shiny::tags$div(class = "card-title", "Required R packages"),
