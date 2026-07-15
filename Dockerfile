@@ -55,7 +55,7 @@ RUN install2.r --error --skipinstalled -n 10 \
 # ------------------------------------------------------------
 
 RUN R -e "devtools::install_github('immunogenomics/presto')"
-RUN R -e "devtools::install_github('oobianom/shinyStorePlus')""
+RUN R -e "devtools::install_github('oobianom/shinyStorePlus')"
 
 ARG GITHUB_PAT
 ENV GITHUB_PAT=${GITHUB_PAT}
