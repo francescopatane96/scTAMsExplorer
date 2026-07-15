@@ -53,22 +53,26 @@
 #' @importFrom shiny shinyApp
 #'
 #' @export
+# =========================================================
+# Launch app
+# =========================================================
 launch_explorer <- function(seurat_obj,
-                            port           = 3838,
+                            port = 3838,
                             launch.browser = FALSE,
-                            host           = "0.0.0.0",
-                            rpkg_key       = NA,
+                            host = "0.0.0.0",
+                            rpkg_key = NA,
                             ...) {
 
-  # ---- Input validation ----------------------------------
+  # ---- Input validation ---------------------------------
   if (!inherits(seurat_obj, "Seurat")) {
     stop("`seurat_obj` must be a Seurat object.", call. = FALSE)
   }
+
   if (ncol(seurat_obj) == 0L) {
     stop("`seurat_obj` contains no cells.", call. = FALSE)
   }
 
-  # ---- Startup banner ------------------------------------
+  # ---- Startup banner -----------------------------------
   message("Launching Seurat Atlas Explorer ...")
   message("  Cells:    ", ncol(seurat_obj))
   message("  Features: ", nrow(seurat_obj))
@@ -76,17 +80,37 @@ launch_explorer <- function(seurat_obj,
   mc <- get_metadata_choices(seurat_obj)
   message("  Metadata columns: ", paste(mc, collapse = ", "))
 
+  # ---- Application options ------------------------------
+  opts <- list(
+    launch.browser = launch.browser,
+    host = host,
+    rpkg_key = rpkg_key
+  )
+
+  if (!is.null(port)) {
+    opts$port <- as.integer(port)
+  }
+
   # ---- Build app ----------------------------------------
-  ui     <- atlas_ui(mc)
-  server <- atlas_server(seurat_obj, mc)
+  ui <- atlas_ui(
+    metadata_choices = mc,
+    opts = opts
+  )
+
+  server <- atlas_server(
+    seurat_obj = seurat_obj,
+    metadata_choices = mc,
+    opts = opts
+  )
 
   shiny::addResourcePath(
-  "www",
-  system.file("app/www", package = "scTAMsExplorer")
-)
-  
-  opts <- list(launch.browser = launch.browser, host = host, rpkg_key = rpkg_key)
-  if (!is.null(port)) opts$port <- as.integer(port)
+    "www",
+    system.file("app/www", package = "scTAMsExplorer")
+  )
 
-  shiny::shinyApp(ui = ui, server = server, options = opts)
+  shiny::shinyApp(
+    ui = ui,
+    server = server,
+    options = opts
+  )
 }
