@@ -57,6 +57,7 @@
 #'
 #' @param metadata_choices Character vector of metadata column
 #'   names returned by [get_metadata_choices()].
+#' @param rpkg_key
 #'
 #' @return A Shiny UI definition (a `fluidPage` object).
 #'
