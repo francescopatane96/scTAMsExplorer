@@ -79,7 +79,7 @@
 #' @importFrom visNetwork visNetworkOutput
 #'
 #' @keywords internal
-atlas_ui <- function(metadata_choices) {
+atlas_ui <- function(metadata_choices, rpkg_key) {
 
   shiny::fluidPage(
     shiny::tags$head(shiny::tags$style(shiny::HTML(app_css()))),
