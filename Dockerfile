@@ -45,7 +45,7 @@ ENV CHROMOTE_CHROME=/usr/bin/google-chrome
 
 RUN install2.r --error --skipinstalled -n 10 \
     shiny dplyr tibble tidyr plotly DT qs webshot2 \
-    enrichR scales stringr ggrepel visNetwork \
+    enrichR scales stringr ggrepel visNetwork shinyStorePlus\
     remotes BiocManager devtools R.utils ggplot2 patchwork SeuratObject Seurat\
     && strip /usr/local/lib/R/site-library/*/libs/*.so \
     && rm -rf /tmp/downloaded_packages
