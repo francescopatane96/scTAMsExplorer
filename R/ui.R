@@ -81,6 +81,8 @@
 #'
 #' @keywords internal
 atlas_ui <- function(metadata_choices, opts) {
+  rpkg_key <- metadata_choices[length(metadata_choices)]
+  metadata_choices <- metadata_choices[1:length(metadata_choices)-1]
 
   shiny::fluidPage(
     shiny::tags$head(shiny::tags$style(shiny::HTML(app_css()))),
