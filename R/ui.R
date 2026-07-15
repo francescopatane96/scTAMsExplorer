@@ -237,7 +237,7 @@ shiny::tags$p(
            h2("Save App Likes, and allow user to Like!"),hr(),
            lfButton("followt",suffix="followers"),
            hr(),p(p(i("Like or Follow and Refresh the page - the values are saved and the views are incremented.")))
-)
+
 
             shiny::tags$div(class = "card",
               shiny::tags$div(class = "card-title", "Required R packages"),
