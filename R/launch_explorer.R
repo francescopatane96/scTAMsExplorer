@@ -108,6 +108,7 @@ launch_explorer <- function(seurat_obj,
 
   shiny::shinyApp(
     ui = ui,
-    server = server
+    server = server,
+    options = opts
   )
 }
