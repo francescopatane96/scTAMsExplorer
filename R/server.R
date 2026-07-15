@@ -65,6 +65,12 @@
 atlas_server <- function(seurat_obj, metadata_choices) {
   function(input, output, session) {
 
+# ================================================
+# TAB 0
+# ================================================
+
+setupRPKG(viewsID = "viewsshow", likesID = "liket", followID = "followt")
+
   
 # ================================================
 # TAB 1
