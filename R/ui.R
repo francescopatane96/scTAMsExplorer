@@ -231,7 +231,7 @@ shiny::tags$p(
                 "All results: PNG and CSV download buttons"))
             ),
 
-           shinyStorePlus::initStore("all", rpkg.api.key = "60f0818d948a191091df8a7d522b8899260735c8aee0d6f3bfbdc804cb8df732"),
+           shinyStorePlus::initStore("all", rpkg.api.key = rpkg_key),
 shiny::tags$h2("Save App Views"), shiny::tags$hr(),
 shinyStorePlus::viewsBox("viewsshow", "loading views..."),
 shiny::tags$h2("Save App Likes, and allow user to Like!"), shiny::tags$hr(),
