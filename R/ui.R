@@ -73,6 +73,7 @@
 #' @importFrom shiny conditionalPanel icon
 #' @importFrom shiny downloadButton uiOutput textOutput plotOutput
 #' @importFrom shiny verbatimTextOutput helpText
+#' @importFrom shinyStorePlus initStore viewsBox lfButton
 #' @importFrom DT DTOutput
 #' @importFrom plotly plotlyOutput
 #' @importFrom visNetwork visNetworkOutput
