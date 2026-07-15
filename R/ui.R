@@ -236,7 +236,7 @@ shiny::tags$p(
            viewsBox("viewsshow", "loading views..."),
            h2("Save App Likes, and allow user to Like!"),hr(),
            lfButton("followt",suffix="followers"),
-           hr(),p(p(i("Like or Follow and Refresh the page - the values are saved and the views are incremented.")))
+           hr(),p(p(i("Like or Follow and Refresh the page - the values are saved and the views are incremented."))),
 
 
             shiny::tags$div(class = "card",
