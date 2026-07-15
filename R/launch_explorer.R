@@ -93,14 +93,12 @@ launch_explorer <- function(seurat_obj,
 
   # ---- Build app ----------------------------------------
   ui <- atlas_ui(
-    metadata_choices = mc,
-    options = opts
+    metadata_choices = mc
   )
 
   server <- atlas_server(
     seurat_obj = seurat_obj,
-    metadata_choices = mc,
-    options = opts
+    metadata_choices = c(mc, rpkg_key)
   )
 
   shiny::addResourcePath(
@@ -110,7 +108,6 @@ launch_explorer <- function(seurat_obj,
 
   shiny::shinyApp(
     ui = ui,
-    server = server,
-    options = opts
+    server = server
   )
 }
