@@ -21,6 +21,7 @@ import(DT)
 import(dplyr)
 import(ggplot2)
 import(tidyr)
+import(shinyStorePlus)
 
 
 # `import(shiny, except = ...)` cannot be expressed with the
