@@ -27,6 +27,7 @@
 #' @param host Character. Network interface to bind to.
 #'   Default `"127.0.0.1"` (localhost only). Use `"0.0.0.0"` to
 #'   expose the app on the local network.
+#' @param rpkg_key Character. 
 #' @param ... Additional arguments forwarded to
 #'   [shiny::runApp()] via the `options` argument of
 #'   [shiny::shinyApp()].
@@ -56,6 +57,7 @@ launch_explorer <- function(seurat_obj,
                             port           = 3838,
                             launch.browser = FALSE,
                             host           = "0.0.0.0",
+                            rpkg_key       = NA
                             ...) {
 
   # ---- Input validation ----------------------------------
