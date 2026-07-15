@@ -80,7 +80,7 @@
 #' @importFrom visNetwork visNetworkOutput
 #'
 #' @keywords internal
-atlas_ui <- function(metadata_choices, opts) {
+atlas_ui <- function(metadata_choices) {
   rpkg_key <- metadata_choices[length(metadata_choices)]
   metadata_choices <- metadata_choices[1:length(metadata_choices)-1]
 
