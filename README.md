@@ -59,7 +59,8 @@ On Linux systems, "libssl-dev" and "libglpk-dev" need to be installed.
 install.packages(c(
   "shiny", "ggplot2", "dplyr", "tidyr", "tibble",
   "plotly", "DT", "enrichR", "patchwork", "scales",
-  "stringr", "ggrepel", "visNetwork", "remotes", "qs"
+  "stringr", "ggrepel", "visNetwork", "remotes",
+   "qs", "shinyStorePlus"
 ))
 
 remotes::install_github("immunogenomics/presto")
@@ -85,6 +86,7 @@ library(stringr)
 library(ggrepel)
 library(visNetwork)
 library(qs)
+library(shinyStorePlus)
 ```
 
 ---
