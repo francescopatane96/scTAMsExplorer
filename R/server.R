@@ -42,6 +42,7 @@
 #' imports that are NOT covered by those package-level imports.
 #'
 #' @importFrom Seurat DimPlot FeaturePlot VlnPlot DotPlot DoHeatmap
+#' @importFrom shinyStorePlus setupRPKG
 #' @importFrom Seurat FindMarkers AverageExpression
 #' @importFrom Seurat Idents DefaultAssay
 #' @importFrom Seurat AggregateExpression
