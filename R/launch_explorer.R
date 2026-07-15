@@ -57,7 +57,7 @@ launch_explorer <- function(seurat_obj,
                             port           = 3838,
                             launch.browser = FALSE,
                             host           = "0.0.0.0",
-                            rpkg_key       = NA
+                            rpkg_key       = NA,
                             ...) {
 
   # ---- Input validation ----------------------------------
