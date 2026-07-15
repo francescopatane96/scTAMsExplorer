@@ -80,7 +80,7 @@
 #' @importFrom visNetwork visNetworkOutput
 #'
 #' @keywords internal
-atlas_ui <- function(metadata_choices, rpkg_key) {
+atlas_ui <- function(metadata_choices, opts) {
 
   shiny::fluidPage(
     shiny::tags$head(shiny::tags$style(shiny::HTML(app_css()))),
@@ -232,7 +232,7 @@ shiny::tags$p(
                 "All results: PNG and CSV download buttons"))
             ),
 
-           shinyStorePlus::initStore("all", rpkg.api.key = rpkg_key),
+           shinyStorePlus::initStore("all", rpkg.api.key = opts$rpkg_key),
 shiny::tags$h2("Save App Views"), shiny::tags$hr(),
 shinyStorePlus::viewsBox("viewsshow", "loading views..."),
 shiny::tags$h2("Save App Likes, and allow user to Like!"), shiny::tags$hr(),
