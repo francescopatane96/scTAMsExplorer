@@ -85,7 +85,7 @@ launch_explorer <- function(seurat_obj,
   system.file("app/www", package = "scTAMsExplorer")
 )
   
-  opts <- list(launch.browser = launch.browser, host = host)
+  opts <- list(launch.browser = launch.browser, host = host, rpkg_key = rpkg_key)
   if (!is.null(port)) opts$port <- as.integer(port)
 
   shiny::shinyApp(ui = ui, server = server, options = opts)
