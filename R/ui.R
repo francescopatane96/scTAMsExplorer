@@ -233,8 +233,8 @@ shiny::tags$p(
                 "All tables: sortable, filterable, paginated",
                 "All results: PNG and CSV download buttons"))
             ),
-           ifelse (!is.na(rpkg_key), shinyStorePlus::initStore("all", rpkg.api.key = rpkg_key), ""),
-           ifelse (!is.na(rpkg_key), shinyStorePlus::viewsBox("viewsshow", "loading views..."), ""),
+           shinyStorePlus::initStore("all", rpkg.api.key = rpkg_key), 
+           shinyStorePlus::viewsBox("viewsshow", ""), 
 
             shiny::tags$div(class = "card",
               shiny::tags$div(class = "card-title", "Required R packages"),
