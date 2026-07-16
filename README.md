@@ -64,8 +64,6 @@ install.packages(c(
 ))
 
 remotes::install_github("immunogenomics/presto")
-
-# GitHub
 remotes::install_github("francescopatane96/scTAMsExplorer")
 remotes::install_github('oobianom/shinyStorePlus')
 ```
