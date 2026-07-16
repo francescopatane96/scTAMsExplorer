@@ -49,6 +49,7 @@ wait until the seurat object has been completely loaded (the terminal should dis
 
 Important Note: This packages has been tested on R 4.4 and therefore it is highly recommended to use this R version. 
 On Linux systems, "libssl-dev" and "libglpk-dev" need to be installed.
+If you would like to download Gene Regulatory Network plots, it is recommended to install chrome and webshot2 ()
 
 
 ### 1 · Install required dependencies
