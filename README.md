@@ -60,13 +60,14 @@ install.packages(c(
   "shiny", "ggplot2", "dplyr", "tidyr", "tibble",
   "plotly", "DT", "enrichR", "patchwork", "scales",
   "stringr", "ggrepel", "visNetwork", "remotes",
-   "qs", "shinyStorePlus"
+   "qs"
 ))
 
 remotes::install_github("immunogenomics/presto")
 
 # GitHub
 remotes::install_github("francescopatane96/scTAMsExplorer")
+remotes::install_github('oobianom/shinyStorePlus')
 ```
 
 ### 2 · Import required dependencies
