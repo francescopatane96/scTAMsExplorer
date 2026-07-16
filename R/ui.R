@@ -233,16 +233,9 @@ shiny::tags$p(
                 "All tables: sortable, filterable, paginated",
                 "All results: PNG and CSV download buttons"))
             ),
+           ifelse (!is.na(rpkg_key), shinyStorePlus::initStore("all", rpkg.api.key = rpkg_key), ""),
+           ifelse (!is.na(rpkg_key), shinyStorePlus::viewsBox("viewsshow", "loading views..."), ""),
 
-           shinyStorePlus::initStore("all", rpkg.api.key = rpkg_key),
-shiny::tags$h2("Save App Views"), shiny::tags$hr(),
-shinyStorePlus::viewsBox("viewsshow", "loading views..."),
-shiny::tags$h2("Save App Likes, and allow user to Like!"), shiny::tags$hr(),
-shinyStorePlus::lfButton("liket", suffix = "likes"),
-shiny::tags$h2("Save App Followers, and allow user to Follow!"), shiny::tags$hr(),
-shinyStorePlus::lfButton("followt", suffix = "followers"),
-shiny::tags$hr(),
-shiny::tags$p(shiny::tags$p(shiny::tags$i("Like or Follow and Refresh the page - the values are saved and the views are incremented."))),
             shiny::tags$div(class = "card",
               shiny::tags$div(class = "card-title", "Required R packages"),
               shiny::tags$div(class = "tech-pills",
