@@ -58,7 +58,7 @@ If you would like to download Gene Regulatory Network plots, it is recommended t
 ```r
 # CRAN packages
 install.packages(c(
-  "shiny", "ggplot2", "dplyr", "tidyr", "tibble",
+  "Cairo", "Seurat", "shiny", "ggplot2", "dplyr", "tidyr", "tibble",
   "plotly", "DT", "enrichR", "patchwork", "scales",
   "stringr", "ggrepel", "visNetwork", "remotes",
    "qs"
@@ -66,7 +66,6 @@ install.packages(c(
 
 remotes::install_github("oobianom/shinyStorePlus@1.6")
 remotes::install_github("immunogenomics/presto@734d13f0c3154310d01428e92894abd66f5d76b2")
-install.packages("Seurat")
 remotes::install_github("francescopatane96/scTAMsExplorer")
 
 ```
