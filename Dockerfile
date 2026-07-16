@@ -46,7 +46,7 @@ ENV CHROMOTE_CHROME=/usr/bin/google-chrome
 RUN install2.r --error --skipinstalled -n 10 \
     shiny dplyr tibble tidyr plotly DT qs webshot2 \
     enrichR scales stringr ggrepel visNetwork \
-    remotes BiocManager devtools R.utils ggplot2 patchwork SeuratObject Seurat\
+    remotes BiocManager R.utils ggplot2 patchwork SeuratObject Seurat\
     && strip /usr/local/lib/R/site-library/*/libs/*.so \
     && rm -rf /tmp/downloaded_packages
 
@@ -54,8 +54,8 @@ RUN install2.r --error --skipinstalled -n 10 \
 # GitHub installs — use PAT to avoid rate limit
 # ------------------------------------------------------------
 
-RUN R -e "devtools::install_github('immunogenomics/presto')"
-RUN R -e "devtools::install_github('oobianom/shinyStorePlus')"
+RUN R -e "remotes::install_github("immunogenomics/presto@734d13f0c3154310d01428e92894abd66f5d76b2")"
+RUN R -e "remotes::install_github('oobianom/shinyStorePlus@1.6')"
 
 ARG GITHUB_PAT
 ENV GITHUB_PAT=${GITHUB_PAT}
