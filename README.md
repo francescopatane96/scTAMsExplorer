@@ -63,9 +63,11 @@ install.packages(c(
    "qs"
 ))
 
-remotes::install_github("immunogenomics/presto")
+remotes::install_github("oobianom/shinyStorePlus@1.6")
+remotes::install_github("immunogenomics/presto@734d13f0c3154310d01428e92894abd66f5d76b2")
+install.packages("Seurat")
 remotes::install_github("francescopatane96/scTAMsExplorer")
-remotes::install_github('oobianom/shinyStorePlus')
+
 ```
 
 ### 2 · Import required dependencies
