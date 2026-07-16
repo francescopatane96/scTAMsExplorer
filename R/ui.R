@@ -233,9 +233,7 @@ shiny::tags$p(
                 "All tables: sortable, filterable, paginated",
                 "All results: PNG and CSV download buttons"))
             ),
-           shinyStorePlus::initStore("all", rpkg.api.key = rpkg_key), 
-           shinyStorePlus::viewsBox("viewsshow", ""), 
-
+           
             shiny::tags$div(class = "card",
               shiny::tags$div(class = "card-title", "Required R packages"),
               shiny::tags$div(class = "tech-pills",
@@ -247,6 +245,9 @@ shiny::tags$p(
                 )
               )
             ),
+
+            shinyStorePlus::initStore("all", rpkg.api.key = rpkg_key), 
+           shinyStorePlus::viewsBox("viewsshow", ""), 
 
             shiny::tags$div(class = "info-footer",
               shiny::tags$div(class = "footer-credit",
