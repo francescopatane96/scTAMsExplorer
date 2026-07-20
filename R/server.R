@@ -482,7 +482,7 @@ degs_data <- eventReactive(input$deg, {
   FindMarkers(seurat_obj,
               ident.1 = cells_g1,
               ident.2 = cells_g2,
-              slot = "data",
+              slot = "data") |>
               #fc.slot = "counts") |>
     rownames_to_column("gene") |>
     mutate(direction = ifelse(avg_log2FC > 0, "UP", "DOWN"),
