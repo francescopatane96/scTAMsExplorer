@@ -494,7 +494,7 @@ degs_data <- eventReactive(input$deg, {
     req(degs_data())
     df <- degs_data() |>
       filter(p_val_adj < input$pval_cut, abs_fc >= input$lfc_cut) |>
-      arrange(p_val_adj) |> head(input$n_deg_table)
+      arrange(p_val_adj) #|> head(input$n_deg_table)
     datatable(df, filter = "top",
               options = list(pageLength = 15, scrollX = TRUE)) |>
       formatSignif(columns = c("p_val", "p_val_adj", "avg_log2FC"), digits = 3)
@@ -531,9 +531,7 @@ degs_data <- eventReactive(input$deg, {
 
   output$volcano_container <- renderUI({
     req(input$volcano_width, input$volcano_height)
-    plotlyOutput("volcano_plot",
-                 width  = paste0(input$volcano_width,  "px"),
-                 height = paste0(input$volcano_height, "px"))
+    plotlyOutput("volcano_plot")
   })
   output$volcano_plot <- renderPlotly({ ggplotly(volcano_plot_obj(), tooltip = "text") })
 

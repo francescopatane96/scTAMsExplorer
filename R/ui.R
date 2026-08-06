@@ -347,8 +347,6 @@ shiny::tags$p(
                 min = 0,      max = 5,    value = 0, step = 0.1),
               shiny::sliderInput("n_label",     "Volcano labels:",
                 min = 0,      max = 30,   value = 10),
-              shiny::sliderInput("n_deg_table", "Rows in DEG table:",
-                min = 10,     max = 500,  value = 100),
               shiny::actionButton("deg", "Run DEG analysis",
                 icon = shiny::icon("calculator"), class = "btn-primary"),
               shiny::h4("Enrichment"),

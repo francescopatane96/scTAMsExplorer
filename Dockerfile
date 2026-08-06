@@ -54,8 +54,10 @@ RUN install2.r --error --skipinstalled -n 10 \
 # GitHub installs — use PAT to avoid rate limit
 # ------------------------------------------------------------
 
-RUN R -e "remotes::install_github("immunogenomics/presto@734d13f0c3154310d01428e92894abd66f5d76b2")"
-RUN R -e "remotes::install_github('oobianom/shinyStorePlus@1.6')"
+# @734d13f0c3154310d01428e92894abd66f5d76b2
+# @1.6
+RUN R -e 'remotes::install_github("immunogenomics/presto")'
+RUN R -e 'remotes::install_github("oobianom/shinyStorePlus")'
 
 ARG GITHUB_PAT
 ENV GITHUB_PAT=${GITHUB_PAT}
